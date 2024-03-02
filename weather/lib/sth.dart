@@ -16,14 +16,4 @@ void main() async {
     value["night"]["image"] = "$path\\wc_${key}_night.png";
   });
   var myFile = File("file.json").writeAsString(jsonEncode(weatherCodes).toString());
-  // runApp(const MyApp());
 }
-
-// class MyApp extends StatelessWidget {
-//   const MyApp({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return const MaterialApp(home: HomePage());
-//   }
-// }

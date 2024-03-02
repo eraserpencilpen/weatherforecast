@@ -14,3 +14,7 @@ class MyApp extends StatelessWidget {
     return const MaterialApp(home: HomePage());
   }
 }
+
+void foo() {
+  print("Hello World");
+}
