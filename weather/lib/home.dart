@@ -25,4 +25,12 @@ class HomePageState extends State<HomePage> {
 void foo() async {
   print("Hello World");
   LocationPermission permission = await Geolocator.requestPermission();
+  if (permission == LocationPermission.always ||
+      permission == LocationPermission.whileInUse) {
+    print("We got Access!");
+    var position = await Geolocator.getCurrentPosition();
+    print(position);
+  } else {
+    print("Request Access");
+  }
 }
