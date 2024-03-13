@@ -4,7 +4,6 @@ import 'package:http/http.dart' as http;
 import 'const.dart';
 import 'dart:io';
 import 'dart:convert';
-import 'package:location/location.dart';
 
 void main() async {
 

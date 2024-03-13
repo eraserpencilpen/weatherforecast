@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:location/location.dart';
+import 'package:geolocator/geolocator.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -22,9 +22,7 @@ class HomePageState extends State<HomePage> {
   }
 }
 
-void foo() {
+void foo() async {
   print("Hello World");
-  final location = new Location();
-  var data = location.getLocation();
-  print(data);
+  LocationPermission permission = await Geolocator.requestPermission();
 }
