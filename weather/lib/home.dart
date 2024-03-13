@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -13,7 +14,8 @@ class HomePageState extends State<HomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    foo();
+    // getLocation();
+    getTime();
   }
 
   @override
@@ -22,7 +24,7 @@ class HomePageState extends State<HomePage> {
   }
 }
 
-void foo() async {
+void getLocation() async {
   print("Hello World");
   LocationPermission permission = await Geolocator.requestPermission();
   if (permission == LocationPermission.always ||
@@ -33,4 +35,8 @@ void foo() async {
   } else {
     print("Request Access");
   }
+}
+
+void getTime() {
+  print("time");
 }
