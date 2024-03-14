@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:geolocator/geolocator.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -26,4 +27,17 @@ void getTime() async {
   final response = await http.get(Uri.parse(
       "https://timeapi.io/api/Time/current/coordinate?latitude=16.84&longitude=96.17"));
   print(response.body);
+}
+
+void getLocation() async {
+  print("Hello World");
+  LocationPermission permission = await Geolocator.requestPermission();
+  if (permission == LocationPermission.always ||
+      permission == LocationPermission.whileInUse) {
+    print("We got Access!");
+    var position = await Geolocator.getCurrentPosition();
+    print(position);
+  } else {
+    print("Request Access");
+  }
 }
