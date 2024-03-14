@@ -14,7 +14,12 @@ class HomePageState extends State<HomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getTime();
+    getLocation().then((value) {
+      if (value.runtimeType == Position) {
+        print(value);
+        getTime();
+      }
+    });
   }
 
   @override
@@ -29,15 +34,15 @@ void getTime() async {
   print(response.body);
 }
 
-void getLocation() async {
-  print("Hello World");
+Future<dynamic> getLocation() async {
   LocationPermission permission = await Geolocator.requestPermission();
   if (permission == LocationPermission.always ||
       permission == LocationPermission.whileInUse) {
     print("We got Access!");
     var position = await Geolocator.getCurrentPosition();
-    print(position);
+    return position;
   } else {
     print("Request Access");
+    return permission;
   }
 }
