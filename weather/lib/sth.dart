@@ -6,9 +6,9 @@ import 'dart:io';
 import 'dart:convert';
 
 void main() async {
+  // 16.85365077959264, 96.16809910455662
   final response = await http.get(Uri.parse(
-      "https://api.open-meteo.com/v1/forecast?latitude=16.819216322979972&longitude=96.15838214867654&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,weather_code"));
+      "https://api.open-meteo.com/v1/forecast?latitude=16.85365077959264&longitude=96.16809910455662&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,weather_code"));
   Map<dynamic, dynamic> weatherData = jsonDecode(response.body);
-  print(weatherData["hourly"]["temperature_2m"][19]);
+  print(weatherData["hourly"]["temperature_2m"][11]);
 }
-
