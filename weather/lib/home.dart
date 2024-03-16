@@ -18,8 +18,9 @@ class HomePageState extends State<HomePage> {
     super.initState();
     getLocation().then((value) {
       if (value.runtimeType == Position) {
-        print(value);
-        getTime();
+        print(value.toString());
+
+        getTime(value);
         setState(() {
 
           weatherData = getWeatherData(value);
@@ -46,9 +47,18 @@ class HomePageState extends State<HomePage> {
   }
 }
 
-void getTime() async {
+void getTime(currentLocation) async {
+  double latitude = currentLocation.latitude;
+  double longitude = currentLocation.longitude;
+  var a = latitude.toString();
+  var b = longitude.toString();
+  print(latitude);
+  print(longitude);
   final response = await http.get(Uri.parse(
-      "https://timeapi.io/api/Time/current/coordinate?latitude=16.84&longitude=96.17"));
+      "https://timeapi.io/api/Time/current/coordinate?latitude=" +
+          a +
+          "&longitude=" +
+          b));
   print(response.body);
 }
 
