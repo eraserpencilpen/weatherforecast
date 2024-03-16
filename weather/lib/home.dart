@@ -11,19 +11,39 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  Map<String,dynamic> weatherData = {};
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: WeatherWidget(),
+    );
+  }
+}
+
+class WeatherWidget extends StatefulWidget {
+  const WeatherWidget({super.key});
+
+  @override
+  State<WeatherWidget> createState() => _WeatherWidgetState();
+}
+
+class _WeatherWidgetState extends State<WeatherWidget> {
+  Map<String, dynamic> weatherData = {};
+  Map<String, dynamic> time = {};
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getLocation().then((value) {
       if (value.runtimeType == Position) {
-        print(value.toString());
-
         getTime(value);
-        setState(() {
 
-          weatherData = getWeatherData(value);
+        setState(() {
+          getWeatherData(value).then((data) {
+            setState(() {
+              weatherData = data;
+            });
+          });
         });
       }
     });
@@ -31,19 +51,24 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
+    if (weatherData.isNotEmpty) {
+      return Column(
         children: [
           Center(
-            child: Text(
-              "Yangon",
-              textScaler: TextScaler.linear(6),
-            ),
+              child: Container(
+                  child: Text(
+            "Yangon",
+          ))),
+          Center(
+            child: Container(
+                child: Text(
+                    weatherData["hourly"]["temperature_2m"][15].toString())),
           ),
-          // Center(child: ,)
         ],
-      ),
-    );
+      );
+    } else {
+      return Center(child: const CircularProgressIndicator());
+    }
   }
 }
 
@@ -74,12 +99,12 @@ Future<dynamic> getLocation() async {
     return permission;
   }
 }
-getWeatherData(Position coordinates) async{
+
+Future<Map<String, dynamic>> getWeatherData(Position coordinates) async {
   String latitude = coordinates.latitude.toString();
   String longitude = coordinates.longitude.toString();
   final response = await http.get(Uri.parse(
       "https://api.open-meteo.com/v1/forecast?latitude=$latitude&longitude=$longitude&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,weather_code"));
-  
-  return jsonDecode(response.body);
 
+  return jsonDecode(response.body);
 }
