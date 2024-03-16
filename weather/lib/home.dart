@@ -11,18 +11,34 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: WeatherWidget(),
+    );
+  }
+}
+
+class WeatherWidget extends StatefulWidget {
+  const WeatherWidget({super.key});
+
+  @override
+  State<WeatherWidget> createState() => _WeatherWidgetState();
+}
+
+class _WeatherWidgetState extends State<WeatherWidget> {
   Map<String, dynamic> weatherData = {};
   Map<String, dynamic> time = {};
-  Map<String, dynamic> cityName = {};
+  Map<String,dynamic> cityName = {};
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getLocation().then((value) {
       if (value.runtimeType == Position) {
-        print(value.toString());
-
         getTime(value);
+
         setState(() {
           weatherData = getWeatherData(value);
           time = getTime(value);
@@ -34,8 +50,8 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
+    if (weatherData.isNotEmpty) {
+      return Column(
         children: [
           Center(
             child: Text(
@@ -50,9 +66,11 @@ class HomePageState extends State<HomePage> {
   }
 }
 
-getTime(currentLocation) async {
-  String latitude = currentLocation.latitude.toString();
-  String longitude = currentLocation.longitude.toString();
+void getTime(currentLocation) async {
+  double latitude = currentLocation.latitude;
+  double longitude = currentLocation.longitude;
+  var a = latitude.toString();
+  var b = longitude.toString();
   print(latitude);
   print(longitude);
   final response = await http.get(Uri.parse(
@@ -74,7 +92,7 @@ Future<dynamic> getLocation() async {
   }
 }
 
-getWeatherData(Position coordinates) async {
+Future<Map<String, dynamic>> getWeatherData(Position coordinates) async {
   String latitude = coordinates.latitude.toString();
   String longitude = coordinates.longitude.toString();
   final response = await http.get(Uri.parse(
