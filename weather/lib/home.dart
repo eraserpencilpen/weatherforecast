@@ -29,7 +29,7 @@ class WeatherWidget extends StatefulWidget {
 class _WeatherWidgetState extends State<WeatherWidget> {
   Map<String, dynamic> weatherData = {};
   Map<String, dynamic> time = {};
-  Map<String,dynamic> cityName = {};
+  Map<String, dynamic> cityName = {};
 
   @override
   void initState() {
@@ -37,12 +37,20 @@ class _WeatherWidgetState extends State<WeatherWidget> {
     super.initState();
     getLocation().then((value) {
       if (value.runtimeType == Position) {
-        getTime(value);
-
-        setState(() {
-          weatherData = getWeatherData(value);
-          time = getTime(value);
-          cityName = getCityName(value);
+        getWeatherData(value).then((data) {
+          setState(() {
+            weatherData = data;
+          });
+        });
+        getTime(value).then((data) {
+          setState(() {
+            time = data;
+          });
+        });
+        getCityName(value).then((data) {
+          setState(() {
+            cityName = data;
+          });
         });
       }
     });
@@ -59,14 +67,18 @@ class _WeatherWidgetState extends State<WeatherWidget> {
               textScaler: TextScaler.linear(6),
             ),
           ),
-          // Center(child: ,)
+          Center(
+            child: Text(weatherData["hourly"]["temperature_2m"][15].toString()),
+          )
         ],
-      ),
-    );
+      );
+    } else {
+      return Center(child: CircularProgressIndicator());
+    }
   }
 }
 
-void getTime(currentLocation) async {
+Future<Map<String, dynamic>> getTime(currentLocation) async {
   double latitude = currentLocation.latitude;
   double longitude = currentLocation.longitude;
   var a = latitude.toString();
@@ -101,7 +113,7 @@ Future<Map<String, dynamic>> getWeatherData(Position coordinates) async {
   return jsonDecode(response.body);
 }
 
-getCityName(Position coordinates) async {
+Future<Map<String, dynamic>> getCityName(Position coordinates) async {
   String latitude = coordinates.latitude.toString();
   String longitude = coordinates.longitude.toString();
   final response = await http.get(Uri.parse(
