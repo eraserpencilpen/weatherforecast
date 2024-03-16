@@ -11,7 +11,9 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  Map<String,dynamic> weatherData = {};
+  Map<String, dynamic> weatherData = {};
+  Map<String, dynamic> time = {};
+  Map<String, dynamic> cityName = {};
   @override
   void initState() {
     // TODO: implement initState
@@ -22,8 +24,9 @@ class HomePageState extends State<HomePage> {
 
         getTime(value);
         setState(() {
-
           weatherData = getWeatherData(value);
+          time = getTime(value);
+          cityName = getCityName(value);
         });
       }
     });
@@ -47,19 +50,15 @@ class HomePageState extends State<HomePage> {
   }
 }
 
-void getTime(currentLocation) async {
-  double latitude = currentLocation.latitude;
-  double longitude = currentLocation.longitude;
-  var a = latitude.toString();
-  var b = longitude.toString();
+getTime(currentLocation) async {
+  String latitude = currentLocation.latitude.toString();
+  String longitude = currentLocation.longitude.toString();
   print(latitude);
   print(longitude);
   final response = await http.get(Uri.parse(
-      "https://timeapi.io/api/Time/current/coordinate?latitude=" +
-          a +
-          "&longitude=" +
-          b));
+      "https://timeapi.io/api/Time/current/coordinate?latitude=$latitude&longitude=$longitude"));
   print(response.body);
+  return jsonDecode(response.body);
 }
 
 Future<dynamic> getLocation() async {
@@ -74,12 +73,21 @@ Future<dynamic> getLocation() async {
     return permission;
   }
 }
-getWeatherData(Position coordinates) async{
+
+getWeatherData(Position coordinates) async {
   String latitude = coordinates.latitude.toString();
   String longitude = coordinates.longitude.toString();
   final response = await http.get(Uri.parse(
       "https://api.open-meteo.com/v1/forecast?latitude=$latitude&longitude=$longitude&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,weather_code"));
-  
-  return jsonDecode(response.body);
 
+  return jsonDecode(response.body);
+}
+
+getCityName(Position coordinates) async {
+  String latitude = coordinates.latitude.toString();
+  String longitude = coordinates.longitude.toString();
+  final response = await http.get(Uri.parse(
+      "https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=$latitude&longitude=$longitude&localityLanguage=en"));
+
+  return jsonDecode(response.body);
 }
