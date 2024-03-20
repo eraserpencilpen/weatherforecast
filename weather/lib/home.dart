@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 import 'dart:convert';
 
+import 'package:weather/const.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -61,7 +63,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
     if (weatherData.isNotEmpty) {
       return Column(
         children: [
-          const Center(
+          Center(
             child: Text(
               cityName["city"].toString(),
               textScaler: TextScaler.linear(6),
@@ -80,10 +82,11 @@ class _WeatherWidgetState extends State<WeatherWidget> {
               children: [
                 Builder(builder: (context) {
                   // To-do night and day image change
-                  return Image.asset(
-                      weatherData["hourly"]["weather_code"][time["hour"]]);
+                  return Image.asset(weatherCodes[weatherData["hourly"]
+                      ["weather_code"][time["hour"]]["day"]["image"]]);
                 }),
-                Text()
+                Text(weatherData["hourly"]["weather_code"][time["hour"]]["day"]
+                    ["description"])
               ],
             ),
           ),
