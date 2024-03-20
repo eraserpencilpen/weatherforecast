@@ -61,19 +61,36 @@ class _WeatherWidgetState extends State<WeatherWidget> {
     if (weatherData.isNotEmpty) {
       return Column(
         children: [
-          Center(
+          const Center(
             child: Text(
               "Yangon",
               textScaler: TextScaler.linear(6),
             ),
           ),
           Center(
-            child: Text(weatherData["hourly"]["temperature_2m"][15].toString()),
+            child: Text(weatherData["hourly"]["temperature_2m"][time["hour"]]
+                .toString()),
+          ),
+          Center(
+            child: Text(
+                "Feels like ${weatherData["hourly"]["temperature_2m"][time["hour"]].toString()}"),
+          ),
+          Center(
+            child: Row(
+              children: [
+                Builder(builder: (context) {
+                  // To-do night and day image change
+                  return Image.asset(
+                      weatherData["hourly"]["weather_code"][time["hour"]]);
+                }),
+                Text()
+              ],
+            ),
           )
         ],
       );
     } else {
-      return Center(child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator());
     }
   }
 }
@@ -83,11 +100,8 @@ Future<Map<String, dynamic>> getTime(currentLocation) async {
   double longitude = currentLocation.longitude;
   var a = latitude.toString();
   var b = longitude.toString();
-  print(latitude);
-  print(longitude);
   final response = await http.get(Uri.parse(
       "https://timeapi.io/api/Time/current/coordinate?latitude=$latitude&longitude=$longitude"));
-  print(response.body);
   return jsonDecode(response.body);
 }
 
@@ -108,7 +122,7 @@ Future<Map<String, dynamic>> getWeatherData(Position coordinates) async {
   String latitude = coordinates.latitude.toString();
   String longitude = coordinates.longitude.toString();
   final response = await http.get(Uri.parse(
-      "https://api.open-meteo.com/v1/forecast?latitude=$latitude&longitude=$longitude&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,weather_code"));
+      "https://api.open-meteo.com/v1/forecast?latitude=$latitude&longitude=$longitude&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,weather_code,apparent_temperature&daily=sunrise,sunset"));
 
   return jsonDecode(response.body);
 }
