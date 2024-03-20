@@ -63,7 +63,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
         children: [
           const Center(
             child: Text(
-              "Yangon",
+              cityName["city"].toString(),
               textScaler: TextScaler.linear(6),
             ),
           ),
