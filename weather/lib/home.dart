@@ -86,6 +86,11 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                 Text()
               ],
             ),
+          ),
+          Container(
+            child: Column(
+              children: [],
+            ),
           )
         ],
       );
