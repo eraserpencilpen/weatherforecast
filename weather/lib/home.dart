@@ -68,16 +68,20 @@ class _WeatherWidgetState extends State<WeatherWidget> {
           Center(
             child: Text(
               cityName["city"].toString(),
-              textScaler: TextScaler.linear(6),
+              textScaler: const TextScaler.linear(2),
             ),
           ),
           Center(
-            child: Text(weatherData["hourly"]["temperature_2m"][time["hour"]]
-                .toString()),
+            child: Text(
+              weatherData["hourly"]["temperature_2m"][time["hour"]].toString(),
+              textScaler: const TextScaler.linear(6),
+            ),
           ),
           Center(
             child: Text(
-                "Feels like ${weatherData["hourly"]["apparent_temperature"][time["hour"]].toString()}"),
+              "Feels like ${weatherData["hourly"]["apparent_temperature"][time["hour"]].toString()}",
+              textScaler: const TextScaler.linear(2),
+            ),
           ),
           Builder(builder: (context) {
             String code =
@@ -121,7 +125,14 @@ class _WeatherWidgetState extends State<WeatherWidget> {
             child: Column(
               children: [],
             ),
-          )
+          ),
+          Card(
+              child: ListView.builder(
+                  itemCount: 7,
+                  shrinkWrap: true,
+                  itemBuilder: (BuildContext context, int index) {
+                    return ListTile(title: Text(weatherData["hourly"]["temperature_2m"][time["hour"] + (24 * index)].toString()),);
+                  }))
         ],
       );
     } else {
@@ -170,7 +181,7 @@ Future<Map<String, dynamic>> getWeatherData(Position coordinates) async {
 
   // API Demo. Latitude longitude set to Bahan.
   // Time zone: GMT +6:30
-  // https://api.open-meteo.com/v1/forecast?latitude=16.819171&longitude=96.158458&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,weather_code,apparent_temperature&daily=sunrise,sunset
+  // https://api.open-meteo.com/v1/forecast?latitude=16.819171&longitude=96.158458&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,weather_code,apparent_temperature&daily=sunrise,sunset&timezone=auto
 
   return jsonDecode(response.body);
 }
