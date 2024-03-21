@@ -142,4 +142,20 @@ Future<Map<String, dynamic>> getCityName(Position coordinates) async {
       "https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=$latitude&longitude=$longitude&localityLanguage=en"));
 
   return jsonDecode(response.body);
+  /*{
+  "latitude": 16.85365077959264,
+  "lookupSource": "coordinates",
+  "longitude": 96.16809910455662,
+  "localityLanguageRequested": "en",
+  "continent": "Asia",
+  "continentCode": "AS",
+  "countryName": "Myanmar",
+  "countryCode": "MM",
+  "principalSubdivision": "Yangon Region",
+  "principalSubdivisionCode": "MM-06",
+  "city": "Yangon",
+  "locality": "South Okkalapa",
+  "postcode": "",
+  "plusCode": "7M8RV539+F6"
+  }*/
 }
