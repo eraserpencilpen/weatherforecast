@@ -83,14 +83,18 @@ class _WeatherWidgetState extends State<WeatherWidget> {
             String code =
                 weatherData["hourly"]["weather_code"][time["hour"]].toString();
             double currentTime =
-                time["hour"].toDouble() + time["minute"].toDouble();
+                time["hour"].toDouble() * 60 + time["minute"].toDouble();
 
             String sunrise_hour =
                 weatherData["daily"]["sunrise"][0].substring(11, 13);
             String sunrise_minute =
                 weatherData["daily"]["sunrise"][0].substring(14, 16);
-            int sunriseHour = int.parse(sunrise_hour);
-            print(sunrise_minute);
+            double sunrise =
+                double.parse(sunrise_hour) * 60 + double.parse(sunrise_minute);
+            String sunset_hour = weatherData["daily"]["sunrise"][0].substring(11, 13);
+            String sunset_minute = weatherData["daily"]["sunrise"][0].substring(14, 16);
+            print(sunrise);
+            print(currentTime);
             // int sunriseMinute = int.parse(sunrise_minute);
             // int sunrise = sunriseHour * sunriseMinute;
             // var sunrise =
