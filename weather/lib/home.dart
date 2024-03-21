@@ -117,9 +117,21 @@ class _WeatherWidgetState extends State<WeatherWidget> {
 
             // }
           }),
-          Container(
-            child: Column(
-              children: [],
+          SizedBox(
+            child: Card(
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Text(time["time"].toString()),
+                      const Text("icon"),
+                      Text(weatherData["hourly"]["temperature_2m"][time["hour"]]
+                              .toString() +
+                          "°C")
+                    ],
+                  )
+                ],
+              ),
             ),
           )
         ],
@@ -143,8 +155,6 @@ Future<Map<String, dynamic>> getTimeZone(Position coordinates) async {
 Future<Map<String, dynamic>> getTime(currentLocation) async {
   double latitude = currentLocation.latitude;
   double longitude = currentLocation.longitude;
-  var a = latitude.toString();
-  var b = longitude.toString();
   final response = await http.get(Uri.parse(
       "https://timeapi.io/api/Time/current/coordinate?latitude=$latitude&longitude=$longitude"));
   // https://timeapi.io/api/Time/current/coordinate?latitude=16.819171&longitude=96.158458
