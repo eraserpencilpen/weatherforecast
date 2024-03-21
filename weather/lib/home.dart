@@ -36,21 +36,24 @@ class _WeatherWidgetState extends State<WeatherWidget> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
     getLocation().then((value) {
       if (value.runtimeType == Position) {
-        getWeatherData(value).then((data) {
-          setState(() {
-            weatherData = data;
+        getTimeZone(value).then((timezone) {
+          getWeatherData(value).then((data) {
+            setState(() {
+              weatherData = data;
+            });
           });
-        });
-        getTime(value).then((data) {
-          setState(() {
-            time = data;
+          getTime(value).then((data) {
+            setState(() {
+              time = data;
+            });
           });
-        });
-        getCityName(value).then((data) {
-          setState(() {
-            cityName = data;
+          getCityName(value).then((data) {
+            setState(() {
+              cityName = data;
+            });
           });
         });
       }
@@ -81,8 +84,18 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                 weatherData["hourly"]["weather_code"][time["hour"]].toString();
             double currentTime =
                 time["hour"].toDouble() + time["minute"].toDouble();
-            // var sunrise = weatherData["daily"]["sunrise"];
-            // print(sunrise);
+
+            String sunrise_hour =
+                weatherData["daily"]["sunrise"][0].substring(11, 13);
+            String sunrise_minute =
+                weatherData["daily"]["sunrise"][0].substring(14, 16);
+            int sunriseHour = int.parse(sunrise_hour);
+            print(sunrise_minute);
+            // int sunriseMinute = int.parse(sunrise_minute);
+            // int sunrise = sunriseHour * sunriseMinute;
+            // var sunrise =
+            //     double.parse(sunrise_hour) * 60 + double.parse(sunrise_minute);
+            // print(sunrise.toString());
             // print(double.parse(time["minute"]));
             // double currentTime =
             //     double.parse(time["hour"]) * 60 + double.parse(time["minute"]);
@@ -106,6 +119,16 @@ class _WeatherWidgetState extends State<WeatherWidget> {
       return const Center(child: CircularProgressIndicator());
     }
   }
+}
+
+Future<Map<String, dynamic>> getTimeZone(Position coordinates) async {
+  // API Key: YXHW1WF6J7IZ
+  // http://api.timezonedb.com/v2.1/get-time-zone?key=YOUR_API_KEY&format=json&by=position&lat=40.689247&lng=-74.044502
+  String latitude = coordinates.latitude.toString();
+  String longitude = coordinates.longitude.toString();
+  final response = await http.get(Uri.parse(
+      "http://api.timezonedb.com/v2.1/get-time-zone?key=YXHW1WF6J7IZ&format=json&by=position&lat=$latitude&lng=$longitude"));
+  return jsonDecode(response.body);
 }
 
 Future<Map<String, dynamic>> getTime(currentLocation) async {
@@ -134,7 +157,7 @@ Future<Map<String, dynamic>> getWeatherData(Position coordinates) async {
   String latitude = coordinates.latitude.toString();
   String longitude = coordinates.longitude.toString();
   final response = await http.get(Uri.parse(
-      "https://api.open-meteo.com/v1/forecast?latitude=$latitude&longitude=$longitude&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,weather_code,apparent_temperature&daily=sunrise,sunset"));
+      "https://api.open-meteo.com/v1/forecast?latitude=$latitude&longitude=$longitude&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,weather_code,apparent_temperature&daily=sunrise,sunset&timezone=auto"));
 
   // API Demo. Latitude longitude set to Bahan.
   // Time zone: GMT +6:30
