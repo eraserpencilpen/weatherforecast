@@ -32,26 +32,28 @@ class _WeatherWidgetState extends State<WeatherWidget> {
   Map<String, dynamic> weatherData = {};
   Map<String, dynamic> time = {};
   Map<String, dynamic> cityName = {};
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+
     getLocation().then((value) {
       if (value.runtimeType == Position) {
-        getWeatherData(value).then((data) {
-          setState(() {
-            weatherData = data;
+        getTimeZone(value).then((timezone) {
+          getWeatherData(value).then((data) {
+            setState(() {
+              weatherData = data;
+            });
           });
-        });
-        getTime(value).then((data) {
-          setState(() {
-            time = data;
+          getTime(value).then((data) {
+            setState(() {
+              time = data;
+            });
           });
-        });
-        getCityName(value).then((data) {
-          setState(() {
-            cityName = data;
+          getCityName(value).then((data) {
+            setState(() {
+              cityName = data;
+            });
           });
         });
       }
@@ -75,21 +77,37 @@ class _WeatherWidgetState extends State<WeatherWidget> {
           ),
           Center(
             child: Text(
-                "Feels like ${weatherData["hourly"]["temperature_2m"][time["hour"]].toString()}"),
+                "Feels like ${weatherData["hourly"]["apparent_temperature"][time["hour"]].toString()}"),
           ),
-          Center(
-            child: Row(
-              children: [
-                Builder(builder: (context) {
-                  // To-do night and day image change
-                  return Image.asset(weatherCodes[weatherData["hourly"]
-                      ["weather_code"][time["hour"]]["day"]["image"]]);
-                }),
-                Text(weatherData["hourly"]["weather_code"][time["hour"]]["day"]
-                    ["description"])
-              ],
-            ),
-          ),
+          Center(child: Builder(builder: (context) {
+            String code =
+                weatherData["hourly"]["weather_code"][time["hour"]].toString();
+            double currentTime =
+                time["hour"].toDouble() + time["minute"].toDouble();
+
+            String sunrise_hour =
+                weatherData["daily"]["sunrise"][0].substring(11, 13);
+            String sunrise_minute =
+                weatherData["daily"]["sunrise"][0].substring(14, 16);
+            int sunriseHour = int.parse(sunrise_hour);
+            print(sunrise_minute);
+            // int sunriseMinute = int.parse(sunrise_minute);
+            // int sunrise = sunriseHour * sunriseMinute;
+            // var sunrise =
+            //     double.parse(sunrise_hour) * 60 + double.parse(sunrise_minute);
+            // print(sunrise.toString());
+            // print(double.parse(time["minute"]));
+            // double currentTime =
+            //     double.parse(time["hour"]) * 60 + double.parse(time["minute"]);
+            // var sunrise = weatherData["daily"]["sunrise"][0].substring(12, 16);
+            // var sunset = weatherData["daily"]["sunrise"].substring(12, 16);
+            // print(sunrise.toString());
+            // print(sunset.toString());
+            return Row();
+            // if (){
+
+            // }
+          })),
           Container(
             child: Column(
               children: [],
@@ -103,6 +121,16 @@ class _WeatherWidgetState extends State<WeatherWidget> {
   }
 }
 
+Future<Map<String, dynamic>> getTimeZone(Position coordinates) async {
+  // API Key: YXHW1WF6J7IZ
+  // http://api.timezonedb.com/v2.1/get-time-zone?key=YOUR_API_KEY&format=json&by=position&lat=40.689247&lng=-74.044502
+  String latitude = coordinates.latitude.toString();
+  String longitude = coordinates.longitude.toString();
+  final response = await http.get(Uri.parse(
+      "http://api.timezonedb.com/v2.1/get-time-zone?key=YXHW1WF6J7IZ&format=json&by=position&lat=$latitude&lng=$longitude"));
+  return jsonDecode(response.body);
+}
+
 Future<Map<String, dynamic>> getTime(currentLocation) async {
   double latitude = currentLocation.latitude;
   double longitude = currentLocation.longitude;
@@ -110,6 +138,7 @@ Future<Map<String, dynamic>> getTime(currentLocation) async {
   var b = longitude.toString();
   final response = await http.get(Uri.parse(
       "https://timeapi.io/api/Time/current/coordinate?latitude=$latitude&longitude=$longitude"));
+  // https://timeapi.io/api/Time/current/coordinate?latitude=16.819171&longitude=96.158458
   return jsonDecode(response.body);
 }
 
@@ -117,11 +146,9 @@ Future<dynamic> getLocation() async {
   LocationPermission permission = await Geolocator.requestPermission();
   if (permission == LocationPermission.always ||
       permission == LocationPermission.whileInUse) {
-    print("We got Access!");
     var position = await Geolocator.getCurrentPosition();
     return position;
   } else {
-    print("Request Access");
     return permission;
   }
 }
@@ -130,7 +157,11 @@ Future<Map<String, dynamic>> getWeatherData(Position coordinates) async {
   String latitude = coordinates.latitude.toString();
   String longitude = coordinates.longitude.toString();
   final response = await http.get(Uri.parse(
-      "https://api.open-meteo.com/v1/forecast?latitude=$latitude&longitude=$longitude&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,weather_code,apparent_temperature&daily=sunrise,sunset"));
+      "https://api.open-meteo.com/v1/forecast?latitude=$latitude&longitude=$longitude&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,weather_code,apparent_temperature&daily=sunrise,sunset&timezone=auto"));
+
+  // API Demo. Latitude longitude set to Bahan.
+  // Time zone: GMT +6:30
+  // https://api.open-meteo.com/v1/forecast?latitude=16.819171&longitude=96.158458&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,weather_code,apparent_temperature&daily=sunrise,sunset
 
   return jsonDecode(response.body);
 }
