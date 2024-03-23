@@ -125,10 +125,11 @@ class _WeatherWidgetState extends State<WeatherWidget> {
             child: Card(
               child: ListView.builder(
                   itemCount: 10,
+                  shrinkWrap: true,
                   itemBuilder: ((context, index) {
                     return Row(
                       children: [
-                        Text(time["time"].toString()),
+                        Text((time["hour"] + index * 2).toString() + ":00"),
                         const Text("icon"),
                         Text(weatherData["hourly"]["temperature_2m"]
                                     [time["hour"]]
