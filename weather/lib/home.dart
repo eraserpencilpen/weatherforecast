@@ -164,8 +164,12 @@ class _WeatherWidgetState extends State<WeatherWidget> {
           ),
           Card(
               child: Column(children: [
-            Center(child: Text("Weekly Weather Forecast",textScaler: TextScaler.linear(3),),),
-            
+            Center(
+              child: Text(
+                "Weekly Weather Forecast",
+                textScaler: TextScaler.linear(3),
+              ),
+            ),
             ListView.builder(
                 itemCount: 7,
                 shrinkWrap: true,
@@ -241,11 +245,11 @@ Future<Map<String, dynamic>> getWeatherData(Position coordinates) async {
   String latitude = coordinates.latitude.toString();
   String longitude = coordinates.longitude.toString();
   final response = await http.get(Uri.parse(
-      "https://api.open-meteo.com/v1/forecast?latitude=$latitude&longitude=$longitude&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,weather_code,apparent_temperature&daily=sunrise,sunset,weather_code,temperature_2m_max,temperature_2m_min&timezone=auto"));
+      "https://api.open-meteo.com/v1/forecast?latitude=$latitude&longitude=$longitude&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,weather_code,apparent_temperature&daily=sunrise,sunset,weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto"));
 
   // API Demo. Latitude longitude set to Bahan.
   // Time zone: GMT +6:30
-  // https://api.open-meteo.com/v1/forecast?latitude=16.819171&longitude=96.158458&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,weather_code,apparent_temperature&daily=sunrise,sunset,weather_code,temperature_2m_max,temperature_2m_min&timezone=auto
+  // https://api.open-meteo.com/v1/forecast?latitude=16.819171&longitude=96.158458&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,weather_code,apparent_temperature&daily=sunrise,sunset,weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto
 
   return jsonDecode(response.body);
 }
