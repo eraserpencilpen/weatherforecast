@@ -62,6 +62,19 @@ class _WeatherWidgetState extends State<WeatherWidget> {
 
   @override
   Widget build(BuildContext context) {
+    String code =
+        weatherData["hourly"]["weather_code"][time["hour"]].toString();
+    double currentTime =
+        time["hour"].toDouble() * 60 + time["minute"].toDouble();
+    String sunrise_hour = weatherData["daily"]["sunrise"][0].substring(11, 13);
+    String sunrise_minute =
+        weatherData["daily"]["sunrise"][0].substring(14, 16);
+    double sunrise =
+        double.parse(sunrise_hour) * 60 + double.parse(sunrise_minute);
+    String sunset_hour = weatherData["daily"]["sunset"][0].substring(11, 13);
+    String sunset_minute = weatherData["daily"]["sunset"][0].substring(14, 16);
+    double sunset =
+        double.parse(sunset_hour) * 60 + double.parse(sunset_minute);
     if (weatherData.isNotEmpty) {
       return Column(
         children: [
@@ -84,22 +97,6 @@ class _WeatherWidgetState extends State<WeatherWidget> {
             ),
           ),
           Builder(builder: (context) {
-            String code =
-                weatherData["hourly"]["weather_code"][time["hour"]].toString();
-            double currentTime =
-                time["hour"].toDouble() * 60 + time["minute"].toDouble();
-            String sunrise_hour =
-                weatherData["daily"]["sunrise"][0].substring(11, 13);
-            String sunrise_minute =
-                weatherData["daily"]["sunrise"][0].substring(14, 16);
-            double sunrise =
-                double.parse(sunrise_hour) * 60 + double.parse(sunrise_minute);
-            String sunset_hour =
-                weatherData["daily"]["sunset"][0].substring(11, 13);
-            String sunset_minute =
-                weatherData["daily"]["sunset"][0].substring(14, 16);
-            double sunset =
-                double.parse(sunset_hour) * 60 + double.parse(sunset_minute);
             if (currentTime <= sunset && currentTime >= sunrise) {
               return Center(
                 child: Row(children: [
@@ -145,10 +142,17 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                   itemCount: 7,
                   shrinkWrap: true,
                   itemBuilder: (BuildContext context, int index) {
-                    return ListTile(
-                      title: Text(
-                          "${weatherData["daily"]["temperature_2m_max"][index].toString()}-${weatherData["daily"]["temperature_2m_min"][index].toString()}"),
-                    );
+                    if (currentTime >= sunrise && currentTime <= sunset) {
+                      return Row();
+                    } else {
+                      return Row(
+                        children: [
+                          Text(""),
+                          Text(
+                              "${weatherData["daily"]["temperature_2m_max"][index].toString()}-${weatherData["daily"]["temperature_2m_min"][index].toString()}"),
+                        ],
+                      );
+                    }
                   }))
         ],
       );
