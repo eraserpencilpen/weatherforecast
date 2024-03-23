@@ -127,7 +127,13 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                     return Row(
                       children: [
                         Text((time["hour"] + index * 2).toString() + ":00"),
-                        const Text("icon"),
+                        Builder(builder: (context) {
+                          if (true) {
+                            return Placeholder();
+                          } else {
+                            return Placeholder();
+                          }
+                        }),
                         Text(weatherData["hourly"]["temperature_2m"]
                                     [time["hour"]]
                                 .toString() +
