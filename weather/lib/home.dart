@@ -78,7 +78,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
           weatherData["daily"]["sunset"][0].substring(14, 16);
       double sunset =
           double.parse(sunset_hour) * 60 + double.parse(sunset_minute);
-      return Column(
+      return ListView(
         children: [
           Center(
             child: Text(
@@ -166,17 +166,26 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                   itemCount: 7,
                   shrinkWrap: true,
                   itemBuilder: (BuildContext context, int index) {
-                    if (currentTime >= sunrise && currentTime <= sunset) {
-                      return Row();
-                    } else {
-                      return Row(
-                        children: [
-                          Text(""),
-                          Text(
-                              "${weatherData["daily"]["temperature_2m_max"][index].toString()}-${weatherData["daily"]["temperature_2m_min"][index].toString()}"),
-                        ],
-                      );
-                    }
+                    return Row(
+                      children: [
+                        Text("${index.toString()}"),
+                        Builder(builder: (context) {
+                          String dailyCode = weatherData["daily"]
+                                  ["weather_code"][index]
+                              .toString();
+                          print(dailyCode);
+                          if (currentTime >= sunrise && currentTime <= sunset) {
+                            return Image.asset(
+                                weatherCodes[dailyCode]["day"]["image"]);
+                          } else {
+                            return Image.asset(
+                                weatherCodes[dailyCode]["night"]["image"]);
+                          }
+                        }),
+                        Text(
+                            "${weatherData["daily"]["temperature_2m_max"][index].toString()}-${weatherData["daily"]["temperature_2m_min"][index].toString()}"),
+                      ],
+                    );
                   }))
         ],
       );
