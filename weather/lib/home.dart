@@ -133,6 +133,15 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                               .toString() +
                           "°C")
                     ],
+                  ),
+                  Row(
+                    children: [
+                      Text(time["time"].toString()),
+                      const Text("icon"),
+                      Text(weatherData["hourly"]["temperature_2m"][time["hour"]]
+                              .toString() +
+                          "°C")
+                    ],
                   )
                 ],
               ),
@@ -143,7 +152,11 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                   itemCount: 7,
                   shrinkWrap: true,
                   itemBuilder: (BuildContext context, int index) {
-                    return ListTile(title: Text(weatherData["hourly"]["temperature_2m"][time["hour"] + (24 * index)].toString()),);
+                    return ListTile(
+                      title: Text(weatherData["hourly"]["temperature_2m"]
+                              [time["hour"] + (24 * index)]
+                          .toString()),
+                    );
                   }))
         ],
       );
