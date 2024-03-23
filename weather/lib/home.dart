@@ -121,6 +121,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
             // }
           }),
           SizedBox(
+            height: 500,
             child: Card(
               child: ListView.builder(
                   itemCount: 10,
@@ -130,16 +131,31 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                       children: [
                         Text((time["hour"] + index * 2).toString() + ":00"),
                         Builder(builder: (context) {
-                          if (true) {
-                            return Placeholder();
+                          if (currentTime <= sunset && currentTime >= sunrise) {
+                            return Center(
+                              child: Row(children: [
+                                Image.asset(weatherCodes[code]["day"]["image"]),
+                              ]),
+                            );
                           } else {
-                            return Placeholder();
+                            return Center(
+                              child: Row(
+                                children: [
+                                  Image.asset(
+                                      weatherCodes[code]["night"]["image"]),
+                                ],
+                              ),
+                            );
                           }
                         }),
                         Text(weatherData["hourly"]["temperature_2m"]
                                     [time["hour"]]
                                 .toString() +
-                            "°C")
+                            "°C"),
+                        Text(weatherData["hourly"]["precipitation_probability"]
+                                    [time["hour"]]
+                                .toString() +
+                            "%")
                       ],
                     );
                   })),
