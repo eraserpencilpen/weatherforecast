@@ -163,7 +163,8 @@ class _WeatherWidgetState extends State<WeatherWidget> {
           ),
           Card(
               child: Column(children: [
-            Center(child: Text("Weekly Forecast",textScaler: TextScaler.linear(3),),),
+            Center(child: Text("Weekly Weather Forecast",textScaler: TextScaler.linear(3),),),
+            
             ListView.builder(
                 itemCount: 7,
                 shrinkWrap: true,
