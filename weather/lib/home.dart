@@ -123,19 +123,20 @@ class _WeatherWidgetState extends State<WeatherWidget> {
           }),
           SizedBox(
             child: Card(
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Text(time["time"].toString()),
-                      const Text("icon"),
-                      Text(weatherData["hourly"]["temperature_2m"][time["hour"]]
-                              .toString() +
-                          "°C")
-                    ],
-                  )
-                ],
-              ),
+              child: ListView.builder(
+                  itemCount: 10,
+                  itemBuilder: ((context, index) {
+                    return Row(
+                      children: [
+                        Text(time["time"].toString()),
+                        const Text("icon"),
+                        Text(weatherData["hourly"]["temperature_2m"]
+                                    [time["hour"]]
+                                .toString() +
+                            "°C")
+                      ],
+                    );
+                  })),
             ),
           ),
           Card(
@@ -143,7 +144,10 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                   itemCount: 7,
                   shrinkWrap: true,
                   itemBuilder: (BuildContext context, int index) {
-                    return ListTile(title: Text(weatherData["hourly"]["temperature_2m"][time["hour"] + (24 * index)].toString()),);
+                    return ListTile(
+                      title: Text(
+                          "${weatherData["daily"]["temperature_2m_max"][index].toString()}-${weatherData["daily"]["temperature_2m_min"][index].toString()}"),
+                    );
                   }))
         ],
       );
@@ -187,11 +191,11 @@ Future<Map<String, dynamic>> getWeatherData(Position coordinates) async {
   String latitude = coordinates.latitude.toString();
   String longitude = coordinates.longitude.toString();
   final response = await http.get(Uri.parse(
-      "https://api.open-meteo.com/v1/forecast?latitude=$latitude&longitude=$longitude&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,weather_code,apparent_temperature&daily=sunrise,sunset&timezone=auto"));
+      "https://api.open-meteo.com/v1/forecast?latitude=$latitude&longitude=$longitude&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,weather_code,apparent_temperature&daily=sunrise,sunset,weather_code,temperature_2m_max,temperature_2m_min&timezone=auto"));
 
   // API Demo. Latitude longitude set to Bahan.
   // Time zone: GMT +6:30
-  // https://api.open-meteo.com/v1/forecast?latitude=16.819171&longitude=96.158458&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,weather_code,apparent_temperature&daily=sunrise,sunset&timezone=auto
+  // https://api.open-meteo.com/v1/forecast?latitude=16.819171&longitude=96.158458&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,weather_code,apparent_temperature&daily=sunrise,sunset,weather_code,temperature_2m_max,temperature_2m_min&timezone=auto
 
   return jsonDecode(response.body);
 }
