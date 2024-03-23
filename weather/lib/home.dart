@@ -62,21 +62,22 @@ class _WeatherWidgetState extends State<WeatherWidget> {
 
   @override
   Widget build(BuildContext context) {
-
     if (weatherData.isNotEmpty && time.isNotEmpty && cityName.isNotEmpty) {
-          String code =
-        weatherData["hourly"]["weather_code"][time["hour"]].toString();
-    double currentTime =
-        time["hour"].toDouble() * 60 + time["minute"].toDouble();
-    String sunrise_hour = weatherData["daily"]["sunrise"][0].substring(11, 13);
-    String sunrise_minute =
-        weatherData["daily"]["sunrise"][0].substring(14, 16);
-    double sunrise =
-        double.parse(sunrise_hour) * 60 + double.parse(sunrise_minute);
-    String sunset_hour = weatherData["daily"]["sunset"][0].substring(11, 13);
-    String sunset_minute = weatherData["daily"]["sunset"][0].substring(14, 16);
-    double sunset =
-        double.parse(sunset_hour) * 60 + double.parse(sunset_minute);
+      String code =
+          weatherData["hourly"]["weather_code"][time["hour"]].toString();
+      double currentTime =
+          time["hour"].toDouble() * 60 + time["minute"].toDouble();
+      String sunrise_hour =
+          weatherData["daily"]["sunrise"][0].substring(11, 13);
+      String sunrise_minute =
+          weatherData["daily"]["sunrise"][0].substring(14, 16);
+      double sunrise =
+          double.parse(sunrise_hour) * 60 + double.parse(sunrise_minute);
+      String sunset_hour = weatherData["daily"]["sunset"][0].substring(11, 13);
+      String sunset_minute =
+          weatherData["daily"]["sunset"][0].substring(14, 16);
+      double sunset =
+          double.parse(sunset_hour) * 60 + double.parse(sunset_minute);
       return ListView(
         children: [
           Center(
@@ -145,31 +146,41 @@ class _WeatherWidgetState extends State<WeatherWidget> {
             ),
           ),
           Card(
-              child: ListView.builder(
-                  itemCount: 7,
-                  shrinkWrap: true,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Row(
-                      children: [
-                        Text("${index.toString()}"),
-                        Builder(builder: (context) {
-                          String dailyCode = weatherData["daily"]
-                                  ["weather_code"][index]
-                              .toString();
-                          print(dailyCode);
-                          if (currentTime >= sunrise && currentTime <= sunset) {
-                            return Image.asset(
-                                weatherCodes[dailyCode]["day"]["image"]);
-                          } else {
-                            return Image.asset(
-                                weatherCodes[dailyCode]["night"]["image"]);
-                          }
-                        }),
-                        Text(
-                            "${weatherData["daily"]["temperature_2m_max"][index].toString()}-${weatherData["daily"]["temperature_2m_min"][index].toString()}"),
-                      ],
-                    );
-                  }))
+              child: Column(children: [
+            Center(child: Text("Weekly Forecast",textScaler: TextScaler.linear(3),),),
+            ListView.builder(
+                itemCount: 7,
+                shrinkWrap: true,
+                itemBuilder: (BuildContext context, int index) {
+                  return Row(
+                    children: [
+                      Text(
+                          "${weatherData["daily"]["time"][index].substring(5, 10)}"),
+                      Builder(builder: (context) {
+                        String dailyCode = weatherData["daily"]["weather_code"]
+                                [index]
+                            .toString();
+                        if (currentTime >= sunrise && currentTime <= sunset) {
+                          return Image.asset(
+                              weatherCodes[dailyCode]["day"]["image"]);
+                        } else {
+                          return Image.asset(
+                              weatherCodes[dailyCode]["night"]["image"]);
+                        }
+                      }),
+                      Text(
+                          "${weatherData["daily"]["temperature_2m_max"][index].toString()}-${weatherData["daily"]["temperature_2m_min"][index].toString()}"),
+                      Image.asset(
+                        "precipitation_percentage.png",
+                        height: 75,
+                      ),
+                      Text(weatherData["daily"]["precipitation_probability_max"]
+                              [index]
+                          .toString())
+                    ],
+                  );
+                }),
+          ]))
         ],
       );
     } else {
@@ -212,11 +223,11 @@ Future<Map<String, dynamic>> getWeatherData(Position coordinates) async {
   String latitude = coordinates.latitude.toString();
   String longitude = coordinates.longitude.toString();
   final response = await http.get(Uri.parse(
-      "https://api.open-meteo.com/v1/forecast?latitude=$latitude&longitude=$longitude&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,weather_code,apparent_temperature&daily=sunrise,sunset,weather_code,temperature_2m_max,temperature_2m_min&timezone=auto"));
+      "https://api.open-meteo.com/v1/forecast?latitude=$latitude&longitude=$longitude&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,weather_code,apparent_temperature&daily=sunrise,sunset,weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto"));
 
   // API Demo. Latitude longitude set to Bahan.
   // Time zone: GMT +6:30
-  // https://api.open-meteo.com/v1/forecast?latitude=16.819171&longitude=96.158458&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,weather_code,apparent_temperature&daily=sunrise,sunset,weather_code,temperature_2m_max,temperature_2m_min&timezone=auto
+  // https://api.open-meteo.com/v1/forecast?latitude=16.819171&longitude=96.158458&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,weather_code,apparent_temperature&daily=sunrise,sunset,weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto
 
   return jsonDecode(response.body);
 }
