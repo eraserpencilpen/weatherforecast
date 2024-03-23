@@ -122,6 +122,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
           }),
           SizedBox(
             height: 500,
+            width: MediaQuery.of(context).size.width * 0.75,
             child: Card(
               child: ListView.builder(
                   itemCount: 10,
