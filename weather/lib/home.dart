@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:html';
 
 import 'package:flutter/cupertino.dart';
@@ -8,6 +9,7 @@ import 'package:geolocator/geolocator.dart';
 import 'dart:convert';
 
 import 'package:weather/const.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -180,14 +182,25 @@ class _WeatherWidgetState extends State<WeatherWidget> {
 
     return ListView(
       children: [
+        SizedBox(height: 50),
         Center(
           child: Text(
+            style: GoogleFonts.dosis(
+              // textStyle: Theme.of(context).textTheme.displayLarge,
+              fontSize: 25,
+              fontWeight: FontWeight.w500,
+              // fontStyle: FontStyle.italic,
+            ),
             widget.cityName["city"].toString(),
             textScaler: const TextScaler.linear(2),
           ),
         ),
         Center(
           child: Text(
+            style: GoogleFonts.dosis(
+              fontSize: 8,
+              fontWeight: FontWeight.w500,
+            ),
             widget.weatherData["hourly"]["temperature_2m"][widget.time["hour"]]
                     .toString() +
                 "°C",
@@ -196,6 +209,10 @@ class _WeatherWidgetState extends State<WeatherWidget> {
         ),
         Center(
           child: Text(
+            style: GoogleFonts.dosis(
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+            ),
             "Feels like ${widget.weatherData["hourly"]["apparent_temperature"][widget.time["hour"]].toString() + "°C"}",
             textScaler: const TextScaler.linear(2),
           ),
@@ -204,14 +221,26 @@ class _WeatherWidgetState extends State<WeatherWidget> {
           if (currentTime <= sunset && currentTime >= sunrise) {
             return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               Image.asset(weatherCodes[code]["day"]["image"]),
-              Text(weatherCodes[code]["day"]["description"])
+              Text(
+                weatherCodes[code]["day"]["description"],
+                style: GoogleFonts.dosis(
+                  fontSize: 25,
+                  fontWeight: FontWeight.w500,
+                ),
+              )
             ]);
           } else {
             return Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(weatherCodes[code]["night"]["image"]),
-                Text(weatherCodes[code]["night"]["description"])
+                Text(
+                  weatherCodes[code]["night"]["description"],
+                  style: GoogleFonts.dosis(
+                    fontSize: 25,
+                    fontWeight: FontWeight.w500,
+                  ),
+                )
               ],
             );
           }
