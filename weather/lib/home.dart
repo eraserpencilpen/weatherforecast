@@ -16,7 +16,10 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: WeatherWidget(),
+      body: Container(
+          decoration: BoxDecoration(
+              image: DecorationImage(image: AssetImage("night_cloudy.jpg"))),
+          child: WeatherWidget()),
     );
   }
 }
@@ -116,12 +119,9 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                 ),
               );
             }
-            // if (){
-
-            // }
           }),
           SizedBox(
-            height: 500,
+            height: 400,
             width: MediaQuery.of(context).size.width * 0.75,
             child: Card(
               child: ListView.builder(
@@ -162,49 +162,52 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                   })),
             ),
           ),
+          Center(
+            child: Text(
+              "Weekly Weather Forecast",
+              textScaler: TextScaler.linear(3),
+            ),
+          ),
           SizedBox(
-            height: MediaQuery.of(context).size.height * 0.5,
+            height: 400,
             child: Card(
-                child: Column(children: [
-              Center(
-                child: Text(
-                  "Weekly Weather Forecast",
-                  textScaler: TextScaler.linear(3),
-                ),
-              ),
-              ListView.builder(
-                  itemCount: 7,
-                  shrinkWrap: true,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Row(
-                      children: [
-                        Text(
-                            "${weatherData["daily"]["time"][index].substring(5, 10)}"),
-                        Builder(builder: (context) {
-                          String dailyCode = weatherData["daily"]["weather_code"]
-                                  [index]
-                              .toString();
-                          if (currentTime >= sunrise && currentTime <= sunset) {
-                            return Image.asset(
-                                weatherCodes[dailyCode]["day"]["image"]);
-                          } else {
-                            return Image.asset(
-                                weatherCodes[dailyCode]["night"]["image"]);
-                          }
-                        }),
-                        Text(
-                            "${weatherData["daily"]["temperature_2m_max"][index].toString()}-${weatherData["daily"]["temperature_2m_min"][index].toString()}"),
-                        Image.asset(
-                          "precipitation_percentage.png",
-                          height: 75,
-                        ),
-                        Text(weatherData["daily"]["precipitation_probability_max"]
-                                [index]
-                            .toString())
-                      ],
-                    );
-                  }),
-            ])),
+                color: Colors.transparent,
+
+                margin: EdgeInsets.all(10),
+                child: ListView.builder(
+                    padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                    itemCount: 7,
+                    shrinkWrap: true,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Row(
+                        children: [
+                          Text(
+                              "${weatherData["daily"]["time"][index].substring(5, 10)}"),
+                          Builder(builder: (context) {
+                            String dailyCode = weatherData["daily"]
+                                    ["weather_code"][index]
+                                .toString();
+                            if (currentTime >= sunrise &&
+                                currentTime <= sunset) {
+                              return Image.asset(
+                                  weatherCodes[dailyCode]["day"]["image"]);
+                            } else {
+                              return Image.asset(
+                                  weatherCodes[dailyCode]["night"]["image"]);
+                            }
+                          }),
+                          Text(
+                              "${weatherData["daily"]["temperature_2m_max"][index].toString()}-${weatherData["daily"]["temperature_2m_min"][index].toString()}"),
+                          Image.asset(
+                            "precipitation_percentage.png",
+                            height: 75,
+                          ),
+                          Text(weatherData["daily"]
+                                  ["precipitation_probability_max"][index]
+                              .toString())
+                        ],
+                      );
+                    })),
           )
         ],
       );
