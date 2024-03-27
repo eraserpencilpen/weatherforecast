@@ -75,6 +75,7 @@ class HomePageState extends State<HomePage> {
 
       List<Widget> widgetOptions = [
         WeatherWidget(weatherData: weatherData, time: time, cityName: cityName),
+        MiscPage()
       ];
       bool isDay = false;
       String image = "";
@@ -119,9 +120,9 @@ class HomePageState extends State<HomePage> {
                   indexOptions = 0;
                 });
               case 1:
-              setState(() {
-                indexOptions = 1;
-              });
+                setState(() {
+                  indexOptions = 1;
+                });
             }
           },
         ),
@@ -344,7 +345,7 @@ class MiscPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return ListView();
   }
 }
 
