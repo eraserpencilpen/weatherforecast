@@ -181,3 +181,39 @@ final Map<String, dynamic> weatherCodes = {
 };
 
 final Map<List, dynamic> bgCodes = {};
+
+final Map<int, String> monthsInYear = {
+  1: "Jan",
+  2: "Feb",
+  3: "Mar",
+  4: "Apr",
+  5: "May",
+  6: "June",
+  7: "July",
+  8: "Aug",
+  9: "Sep",
+  10: "Oct",
+  11: "Nov",
+  12: "December"
+};
+List<int> clearCodes = [0, 1];
+List<int> cloudyCodes = [2, 3, 45, 48];
+List<int> rainyCodes = [
+  51,
+  53,
+  55,
+  56,
+  57,
+  61,
+  63,
+  65,
+  66,
+  67,
+  80,
+  81,
+  82,
+  95,
+  96,
+  99
+];
+List<int> snowyCodes = [71, 73, 75, 77, 85, 86];
