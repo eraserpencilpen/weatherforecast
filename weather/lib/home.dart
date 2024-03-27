@@ -71,11 +71,28 @@ class HomePageState extends State<HomePage> {
           weatherData["daily"]["sunset"][0].substring(14, 16);
       double sunset =
           double.parse(sunset_hour) * 60 + double.parse(sunset_minute);
-      
-      List<int> clearCodes = [0,1];
-      List<int> cloudyCodes = [2,3,45,48];
-      List<int> rainyCodes = [51,53,55,56,57,61,63,65,66,67,80,81,82,95,96,99];
-      List<int> snowyCodes = [71,73,75,77,85,86];
+
+      List<int> clearCodes = [0, 1];
+      List<int> cloudyCodes = [2, 3, 45, 48];
+      List<int> rainyCodes = [
+        51,
+        53,
+        55,
+        56,
+        57,
+        61,
+        63,
+        65,
+        66,
+        67,
+        80,
+        81,
+        82,
+        95,
+        96,
+        99
+      ];
+      List<int> snowyCodes = [71, 73, 75, 77, 85, 86];
       bool isDay = false;
       String image = "";
       if (currentTime >= sunrise && currentTime <= sunset) {
@@ -84,18 +101,23 @@ class HomePageState extends State<HomePage> {
       // If 10 minutes within sunset
       if (currentTime <= sunset + 10 && currentTime >= sunset - 10) {
         image = "bg_images\sunset_cat_big.jpg";
-      } else if (isDay && clearCodes.contains(int.parse(code))) {
-        image = "bg_images\sunny_day_catbg.jpg";
-      } else if (isDay &&
-          cloudyCodes.contains(int.parse(code))) {
-        image = "bg_images\weather/assets/bg_images/cloudy_day_catbg.jpg";
-      } 
+      } else if (clearCodes.contains(int.parse(code))) {
+        image = "bg_images\sunny_${isDay ? "day" : "night"}_catbg.jpg";
+      } else if (cloudyCodes.contains(int.parse(code))) {
+        image = "bg_images\cloudy_${isDay ? "day" : "night"}_catbg.jpg";
+      } else if (rainyCodes.contains(int.parse(code))) {
+        image = "bg_images\rainy_${isDay ? "day" : "night"}_catbg.jpg";
+      } else if (snowyCodes.contains(int.parse(code))) {
+        image = "bg_images\rainy_${isDay ? "day" : "night"}_catbg.jpg";
+      } else {
+        image = "night_cloudy.jpg";
+      }
 
       return Scaffold(
         body: Container(
             decoration: BoxDecoration(
                 image: DecorationImage(
-                    fit: BoxFit.fill, image: AssetImage("night_cloudy.jpg"))),
+                    fit: BoxFit.fill, image: AssetImage(image))),
             child: WeatherWidget(
               weatherData: weatherData,
               time: time,
