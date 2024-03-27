@@ -89,7 +89,7 @@ class HomePageState extends State<HomePage> {
       } else if (isDay &&
           cloudyCodes.contains(int.parse(code))) {
         image = "bg_images\weather/assets/bg_images/cloudy_day_catbg.jpg";
-      } else if (isDay && rainyCodes))
+      } 
 
       return Scaffold(
         body: Container(
