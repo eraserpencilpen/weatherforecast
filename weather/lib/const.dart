@@ -179,3 +179,5 @@ final Map<String, dynamic> weatherCodes = {
     }
   }
 };
+
+final Map<List, dynamic> bgCodes = {};
