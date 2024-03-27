@@ -162,47 +162,50 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                   })),
             ),
           ),
-          Card(
-              child: Column(children: [
-            Center(
-              child: Text(
-                "Weekly Weather Forecast",
-                textScaler: TextScaler.linear(3),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.5,
+            child: Card(
+                child: Column(children: [
+              Center(
+                child: Text(
+                  "Weekly Weather Forecast",
+                  textScaler: TextScaler.linear(3),
+                ),
               ),
-            ),
-            ListView.builder(
-                itemCount: 7,
-                shrinkWrap: true,
-                itemBuilder: (BuildContext context, int index) {
-                  return Row(
-                    children: [
-                      Text(
-                          "${weatherData["daily"]["time"][index].substring(5, 10)}"),
-                      Builder(builder: (context) {
-                        String dailyCode = weatherData["daily"]["weather_code"]
+              ListView.builder(
+                  itemCount: 7,
+                  shrinkWrap: true,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Row(
+                      children: [
+                        Text(
+                            "${weatherData["daily"]["time"][index].substring(5, 10)}"),
+                        Builder(builder: (context) {
+                          String dailyCode = weatherData["daily"]["weather_code"]
+                                  [index]
+                              .toString();
+                          if (currentTime >= sunrise && currentTime <= sunset) {
+                            return Image.asset(
+                                weatherCodes[dailyCode]["day"]["image"]);
+                          } else {
+                            return Image.asset(
+                                weatherCodes[dailyCode]["night"]["image"]);
+                          }
+                        }),
+                        Text(
+                            "${weatherData["daily"]["temperature_2m_max"][index].toString()}-${weatherData["daily"]["temperature_2m_min"][index].toString()}"),
+                        Image.asset(
+                          "precipitation_percentage.png",
+                          height: 75,
+                        ),
+                        Text(weatherData["daily"]["precipitation_probability_max"]
                                 [index]
-                            .toString();
-                        if (currentTime >= sunrise && currentTime <= sunset) {
-                          return Image.asset(
-                              weatherCodes[dailyCode]["day"]["image"]);
-                        } else {
-                          return Image.asset(
-                              weatherCodes[dailyCode]["night"]["image"]);
-                        }
-                      }),
-                      Text(
-                          "${weatherData["daily"]["temperature_2m_max"][index].toString()}-${weatherData["daily"]["temperature_2m_min"][index].toString()}"),
-                      Image.asset(
-                        "precipitation_percentage.png",
-                        height: 75,
-                      ),
-                      Text(weatherData["daily"]["precipitation_probability_max"]
-                              [index]
-                          .toString())
-                    ],
-                  );
-                }),
-          ]))
+                            .toString())
+                      ],
+                    );
+                  }),
+            ])),
+          )
         ],
       );
     } else {
