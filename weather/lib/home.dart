@@ -127,16 +127,21 @@ class _WeatherWidgetState extends State<WeatherWidget> {
             height: 400,
             width: MediaQuery.of(context).size.width * 0.75,
             child: Card(
+              margin: EdgeInsets.all(100),
               child: ListView.builder(
                   itemCount: 10,
                   shrinkWrap: true,
                   itemBuilder: ((context, index) {
+                    int currentHour = time["hour"] + index * 2;
+                    if (currentHour >= 24) {
+                      currentHour = currentHour - 24;
+                    }
                     return Row(
                       children: [
-                        Text((time["hour"] + index * 2).toString() + ":00"),
+                        Text(currentHour.toString() + ":00"),
                         Builder(builder: (context) {
                           String dailyCode = weatherData["hourly"]
-                                  ["weather_code"][time["hour"]]
+                                  ["weather_code"][time["hour"] + index * 2]
                               .toString();
                           if (currentTime >= sunrise && currentTime <= sunset) {
                             return Image.asset(
@@ -147,7 +152,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                           }
                         }),
                         Text(weatherData["hourly"]["temperature_2m"]
-                                    [time["hour"]]
+                                    [time["hour"] + index * 2]
                                 .toString() +
                             "°C"),
                         Image.asset(
@@ -155,7 +160,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                           height: 50,
                         ),
                         Text(weatherData["hourly"]["precipitation_probability"]
-                                [time["hour"]]
+                                [time["hour"] + index * 2]
                             .toString())
                       ],
                     );
@@ -172,10 +177,8 @@ class _WeatherWidgetState extends State<WeatherWidget> {
             height: 400,
             child: Card(
                 color: Colors.transparent,
-
-                margin: EdgeInsets.all(10),
+                margin: EdgeInsets.all(100),
                 child: ListView.builder(
-                    padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                     itemCount: 7,
                     shrinkWrap: true,
                     itemBuilder: (BuildContext context, int index) {
