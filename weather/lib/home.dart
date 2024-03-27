@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 import 'dart:convert';
@@ -88,13 +90,14 @@ class _WeatherWidgetState extends State<WeatherWidget> {
           ),
           Center(
             child: Text(
-              weatherData["hourly"]["temperature_2m"][time["hour"]].toString(),
+              weatherData["hourly"]["temperature_2m"][time["hour"]].toString() +
+                  "°C",
               textScaler: const TextScaler.linear(6),
             ),
           ),
           Center(
             child: Text(
-              "Feels like ${weatherData["hourly"]["apparent_temperature"][time["hour"]].toString()}",
+              "Feels like ${weatherData["hourly"]["apparent_temperature"][time["hour"]].toString() + "°C"}",
               textScaler: const TextScaler.linear(2),
             ),
           ),
@@ -120,7 +123,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
 
             // }
           }),
-          SizedBox(
+          Container(
             height: 500,
             width: MediaQuery.of(context).size.width * 0.75,
             child: Card(
@@ -132,31 +135,28 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                       children: [
                         Text((time["hour"] + index * 2).toString() + ":00"),
                         Builder(builder: (context) {
-                          if (currentTime <= sunset && currentTime >= sunrise) {
-                            return Center(
-                              child: Row(children: [
-                                Image.asset(weatherCodes[code]["day"]["image"]),
-                              ]),
-                            );
+                          String dailyCode = weatherData["hourly"]
+                                  ["weather_code"][time["hour"]]
+                              .toString();
+                          if (currentTime >= sunrise && currentTime <= sunset) {
+                            return Image.asset(
+                                weatherCodes[dailyCode]["day"]["image"]);
                           } else {
-                            return Center(
-                              child: Row(
-                                children: [
-                                  Image.asset(
-                                      weatherCodes[code]["night"]["image"]),
-                                ],
-                              ),
-                            );
+                            return Image.asset(
+                                weatherCodes[dailyCode]["night"]["image"]);
                           }
                         }),
                         Text(weatherData["hourly"]["temperature_2m"]
                                     [time["hour"]]
                                 .toString() +
                             "°C"),
+                        Image.asset(
+                          "precipitation_percentage.png",
+                          height: 50,
+                        ),
                         Text(weatherData["hourly"]["precipitation_probability"]
-                                    [time["hour"]]
-                                .toString() +
-                            "%")
+                                [time["hour"]]
+                            .toString())
                       ],
                     );
                   })),
@@ -194,7 +194,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                           "${weatherData["daily"]["temperature_2m_max"][index].toString()}-${weatherData["daily"]["temperature_2m_min"][index].toString()}"),
                       Image.asset(
                         "precipitation_percentage.png",
-                        height: 75,
+                        height: 50,
                       ),
                       Text(weatherData["daily"]["precipitation_probability_max"]
                               [index]
