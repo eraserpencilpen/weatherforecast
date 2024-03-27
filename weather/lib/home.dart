@@ -186,33 +186,33 @@ class _WeatherWidgetState extends State<WeatherWidget> {
         Center(
           child: Text(
             style: GoogleFonts.dosis(
-              // textStyle: Theme.of(context).textTheme.displayLarge,
-              fontSize: 25,
+              //   // textStyle: Theme.of(context).textTheme.displayLarge,
+              // fontSize: 25,
               fontWeight: FontWeight.w500,
-              // fontStyle: FontStyle.italic,
+              //   // fontStyle: FontStyle.italic,
             ),
             widget.cityName["city"].toString(),
-            textScaler: const TextScaler.linear(2),
+            textScaler: const TextScaler.linear(3),
           ),
         ),
         Center(
           child: Text(
-            style: GoogleFonts.dosis(
-              fontSize: 8,
-              fontWeight: FontWeight.w500,
-            ),
+            // style: GoogleFonts.dosis(
+            //   fontSize: 8,
+            //   fontWeight: FontWeight.w500,
+            // ),
             widget.weatherData["hourly"]["temperature_2m"][widget.time["hour"]]
                     .toString() +
                 "°C",
-            textScaler: const TextScaler.linear(6),
+            textScaler: const TextScaler.linear(5),
           ),
         ),
         Center(
           child: Text(
-            style: GoogleFonts.dosis(
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
-            ),
+            // style: GoogleFonts.dosis(
+            //   fontSize: 15,
+            //   fontWeight: FontWeight.w500,
+            // ),
             "Feels like ${widget.weatherData["hourly"]["apparent_temperature"][widget.time["hour"]].toString() + "°C"}",
             textScaler: const TextScaler.linear(2),
           ),
@@ -238,7 +238,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                   weatherCodes[code]["night"]["description"],
                   style: GoogleFonts.dosis(
                     fontSize: 25,
-                    fontWeight: FontWeight.w500,
+                    //   fontWeight: FontWeight.w500,
                   ),
                 )
               ],
@@ -262,7 +262,13 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Text(currentHour.toString() + ":00"),
+                      Text(
+                        currentHour.toString() + ":00",
+                        style: GoogleFonts.dosis(
+                          fontSize: 20,
+                          //   fontWeight: FontWeight.w500,
+                        ),
+                      ),
                       Builder(builder: (context) {
                         String dailyCode = widget.weatherData["hourly"]
                                 ["weather_code"]
@@ -287,10 +293,15 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                             "precipitation_percentage.png",
                             height: 50,
                           ),
-                          Text(widget.weatherData["hourly"]
-                                  ["precipitation_probability"]
-                                  [widget.time["hour"] + index * 2]
-                              .toString()),
+                          Text(
+                            widget.weatherData["hourly"]
+                                    ["precipitation_probability"]
+                                    [widget.time["hour"] + index * 2]
+                                .toString(),
+                            style: GoogleFonts.dosis(
+                              fontSize: 20,
+                            ),
+                          ),
                         ],
                       )
                     ],
