@@ -1,6 +1,3 @@
-import 'dart:collection';
-import 'dart:html';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -74,10 +71,19 @@ class HomePageState extends State<HomePage> {
           weatherData["daily"]["sunset"][0].substring(14, 16);
       double sunset =
           double.parse(sunset_hour) * 60 + double.parse(sunset_minute);
-
+      String humidity =
+          weatherData["hourly"]["relative_humidity_2m"][0].toString();
+      String uvIndex = weatherData["daily"]["uv_index_max"][0].toString();
+      String sunriseString = weatherData["daily"]["sunrise"][0].substring(11,16);
+      String sunsetString = weatherData["daily"]["sunset"][0].substring(11,16);
       List<Widget> widgetOptions = [
         WeatherWidget(weatherData: weatherData, time: time, cityName: cityName),
-        MiscPage()
+        MiscPage(
+          sunrise: sunriseString,
+          sunset: sunsetString,
+          uvIndex: uvIndex,
+          humidity: humidity,
+        )
       ];
       bool isDay = false;
       String image = "";
@@ -370,11 +376,71 @@ class _WeatherWidgetState extends State<WeatherWidget> {
 }
 
 class MiscPage extends StatelessWidget {
-  const MiscPage({super.key});
+  MiscPage(
+      {super.key,
+      required this.humidity,
+      required this.uvIndex,
+      required this.sunrise,
+      required this.sunset});
+  String humidity;
+  String uvIndex;
+  String sunrise;
+  String sunset;
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        TileWidget(
+            iconPath: "sunrise.png", description: "Sunrise", data: sunrise),
+        TileWidget(iconPath: "sunset.png", description: "Sunset", data: sunset),
+        TileWidget(
+            iconPath: "humidity.png", description: "Humidity", data: humidity),
+        TileWidget(
+            iconPath: "uvindex.png", description: "UV Index", data: uvIndex),
+      ],
+    );
+  }
+}
+
+class TileWidget extends StatelessWidget {
+  TileWidget(
+      {super.key,
+      required this.iconPath,
+      required this.description,
+      required this.data});
+  String iconPath;
+  String description;
+  String data;
 
   @override
   Widget build(BuildContext context) {
-    return ListView();
+    return Card(
+      color: Colors.transparent,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Image.asset(
+            iconPath,
+            height: 100,
+          ),
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.6,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  description,
+                  textScaler: TextScaler.linear(2),
+                ),
+                Text(data, textScaler: TextScaler.linear(2))
+              ],
+            ),
+          )
+        ],
+      ),
+    );
   }
 }
 
@@ -412,11 +478,11 @@ Future<Map<String, dynamic>> getWeatherData(Position coordinates) async {
   String latitude = coordinates.latitude.toString();
   String longitude = coordinates.longitude.toString();
   final response = await http.get(Uri.parse(
-      "https://api.open-meteo.com/v1/forecast?latitude=$latitude&longitude=$longitude&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,weather_code,apparent_temperature&daily=sunrise,sunset,weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto"));
+      "https://api.open-meteo.com/v1/forecast?latitude=$latitude&longitude=$longitude&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,weather_code,apparent_temperature&daily=sunrise,sunset,weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max&timezone=auto"));
 
   // API Demo. Latitude longitude set to Bahan.
   // Time zone: GMT +6:30
-  // https://api.open-meteo.com/v1/forecast?latitude=16.819171&longitude=96.158458&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,weather_code,apparent_temperature&daily=sunrise,sunset,weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto
+  // https://api.open-meteo.com/v1/forecast?latitude=16.819171&longitude=96.158458&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,weather_code,apparent_temperature&daily=sunrise,sunset,weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max&timezone=auto
 
   return jsonDecode(response.body);
 }
