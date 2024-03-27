@@ -127,7 +127,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
             height: 400,
             width: MediaQuery.of(context).size.width * 0.75,
             child: Card(
-              margin: EdgeInsets.all(100),
+              margin: EdgeInsets.all(10),
               child: ListView.builder(
                   itemCount: 10,
                   shrinkWrap: true,
@@ -177,7 +177,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
             height: 400,
             child: Card(
                 color: Colors.transparent,
-                margin: EdgeInsets.all(100),
+                margin: EdgeInsets.all(10),
                 child: ListView.builder(
                     itemCount: 7,
                     shrinkWrap: true,
