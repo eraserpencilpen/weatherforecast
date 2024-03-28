@@ -74,8 +74,9 @@ class HomePageState extends State<HomePage> {
       String humidity =
           weatherData["hourly"]["relative_humidity_2m"][0].toString();
       String uvIndex = weatherData["daily"]["uv_index_max"][0].toString();
-      String sunriseString = weatherData["daily"]["sunrise"][0].substring(11,16);
-      String sunsetString = weatherData["daily"]["sunset"][0].substring(11,16);
+      String sunriseString =
+          weatherData["daily"]["sunrise"][0].substring(11, 16);
+      String sunsetString = weatherData["daily"]["sunset"][0].substring(11, 16);
       List<Widget> widgetOptions = [
         WeatherWidget(weatherData: weatherData, time: time, cityName: cityName),
         MiscPage(
@@ -251,6 +252,12 @@ class _WeatherWidgetState extends State<WeatherWidget> {
             );
           }
         }),
+        Center(
+          child: Text(
+            "Hourly Forecast",
+            textScaler: TextScaler.linear(2),
+          ),
+        ),
         SizedBox(
           height: 400,
           width: MediaQuery.of(context).size.width * 0.75,
@@ -282,16 +289,25 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                             .toString();
                         if (currentTime >= sunrise && currentTime <= sunset) {
                           return Image.asset(
-                              weatherCodes[dailyCode]["day"]["image"]);
+                            weatherCodes[dailyCode]["day"]["image"],
+                            height: 50,
+                            width: 50,
+                          );
                         } else {
                           return Image.asset(
                               weatherCodes[dailyCode]["night"]["image"]);
                         }
                       }),
-                      Text(widget.weatherData["hourly"]["temperature_2m"]
-                                  [widget.time["hour"] + index * 2]
-                              .toString() +
-                          "°C"),
+                      Text(
+                        widget.weatherData["hourly"]["temperature_2m"]
+                                    [widget.time["hour"] + index * 2]
+                                .toString() +
+                            "°C",
+                        style: GoogleFonts.dosis(
+                          fontSize: 20,
+                          //   fontWeight: FontWeight.w500,
+                        ),
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -300,10 +316,12 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                             height: 50,
                           ),
                           Text(
-                            widget.weatherData["hourly"]
-                                    ["precipitation_probability"]
-                                    [widget.time["hour"] + index * 2]
-                                .toString(),
+                            " " +
+                                widget.weatherData["hourly"]
+                                        ["precipitation_probability"]
+                                        [widget.time["hour"] + index * 2]
+                                    .toString() +
+                                "%",
                             style: GoogleFonts.dosis(
                               fontSize: 20,
                             ),
@@ -317,7 +335,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
         ),
         const Center(
           child: Text(
-            "Weekly Weather Forecast",
+            "Weekly Forecast",
             textScaler: TextScaler.linear(2),
           ),
         ),
@@ -373,8 +391,9 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                               height: 50,
                             ),
                             Text(widget.weatherData["daily"]
-                                    ["precipitation_probability_max"][index]
-                                .toString()),
+                                        ["precipitation_probability_max"][index]
+                                    .toString() +
+                                "%"),
                           ],
                         )
                       ],
