@@ -283,19 +283,23 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                         ),
                       ),
                       Builder(builder: (context) {
-                        String dailyCode = widget.weatherData["hourly"]
+                        String code = widget.weatherData["hourly"]
                                 ["weather_code"]
                                 [widget.time["hour"] + index * 2]
                             .toString();
-                        if (currentTime >= sunrise && currentTime <= sunset) {
+                        if ((widget.time["hour"] + index * 2) * 60 >= sunrise &&
+                            (widget.time["hour"] + index * 2) * 60 <= sunset) {
                           return Image.asset(
-                            weatherCodes[dailyCode]["day"]["image"],
+                            weatherCodes[code]["day"]["image"],
                             height: 50,
                             width: 50,
                           );
                         } else {
                           return Image.asset(
-                              weatherCodes[dailyCode]["night"]["image"]);
+                            weatherCodes[code]["night"]["image"],
+                            height: 50,
+                            width: 50,
+                          );
                         }
                       }),
                       Text(
@@ -305,7 +309,6 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                             "°C",
                         style: GoogleFonts.dosis(
                           fontSize: 20,
-                          //   fontWeight: FontWeight.w500,
                         ),
                       ),
                       Row(
