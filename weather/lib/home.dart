@@ -28,7 +28,8 @@ class HomePageState extends State<HomePage> {
     super.initState();
 
     getLocation().then((value) {
-      if (value.runtimeType == Position) {
+      print(value.runtimeType);
+      if (value.runtimeType != LocationPermission) {
         setState(() {
           locationPermissionGiven = true;
         });
@@ -372,10 +373,12 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                               .toString();
                           if (currentTime >= sunrise && currentTime <= sunset) {
                             return Image.asset(
-                                weatherCodes[dailyCode]["day"]["image"]);
+                                weatherCodes[dailyCode]["day"]
+                                    ["image"]);
                           } else {
                             return Image.asset(
-                                weatherCodes[dailyCode]["night"]["image"]);
+                                weatherCodes[dailyCode]["night"]
+                                    ["image"]);
                           }
                         }),
                         Column(
