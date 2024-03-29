@@ -16,11 +16,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         home: HomePage(),
-        theme: _buildTheme(Brightness.dark));
+        theme: _buildTheme(Brightness));
   }
 
   ThemeData _buildTheme(brightness) {
-    var baseTheme = ThemeData(brightness: Brightness.dark);
+    var baseTheme = ThemeData(brightness: Brightness.light);
 
     return baseTheme.copyWith(
       textTheme: GoogleFonts.dosisTextTheme(baseTheme.textTheme),
