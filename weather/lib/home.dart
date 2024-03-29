@@ -88,25 +88,22 @@ class HomePageState extends State<HomePage> {
             windSpeed: windSpeed)
       ];
       bool isDay = false;
-      String image = "";
+      String image = "assets/default_bg.jpg";
       if (currentTime >= sunrise && currentTime <= sunset) {
         isDay = true;
       }
       // If 10 minutes within sunset
       if (currentTime <= sunset + 10 && currentTime >= sunset - 10) {
-        image = "bg_images/sunset_cat_big.jpg";
+        image = "assets/bg_images/sunset_catbg.jpg";
       } else if (clearCodes.contains(int.parse(code))) {
-        image = "bg_images/clear_${isDay ? "day" : "night"}_catbg.jpg";
+        image = "assets/bg_images/clear_${isDay ? "day" : "night"}_catbg.jpg";
       } else if (cloudyCodes.contains(int.parse(code))) {
-        image = "bg_images/cloudy_${isDay ? "day" : "night"}_catbg.jpg";
+        image = "assets/bg_images/cloudy_${isDay ? "day" : "night"}_catbg.jpg";
       } else if (rainyCodes.contains(int.parse(code))) {
-        image = "bg_images/rainy_${isDay ? "day" : "night"}_catbg.jpg";
+        image = "assets/bg_images/rainy_${isDay ? "day" : "night"}_catbg.jpg";
       } else if (snowyCodes.contains(int.parse(code))) {
-        image = "bg_images/rainy_${isDay ? "day" : "night"}_catbg.jpg";
-      } else {
-        image = "night_cloudy.jpg";
+        image = "assets/bg_images/rainy_${isDay ? "day" : "night"}_catbg.jpg";
       }
-      image = "assets/$image";
       return Scaffold(
         body: Container(
             decoration: BoxDecoration(
