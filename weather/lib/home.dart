@@ -257,6 +257,9 @@ class _WeatherWidgetState extends State<WeatherWidget> {
           child: Text(
             "Hourly Forecast",
             textScaler: TextScaler.linear(2),
+            style: GoogleFonts.dosis(
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
         SizedBox(
@@ -292,14 +295,14 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                             (widget.time["hour"] + index * 2) * 60 <= sunset) {
                           return Image.asset(
                             weatherCodes[code]["day"]["image"],
-                            height: 50,
-                            width: 50,
+                            height: 70,
+                            width: 70,
                           );
                         } else {
                           return Image.asset(
                             weatherCodes[code]["night"]["image"],
-                            height: 50,
-                            width: 50,
+                            height: 70,
+                            width: 70,
                           );
                         }
                       }),
@@ -317,10 +320,10 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                         children: [
                           Image.asset(
                             "precipitation_percentage.png",
-                            height: 50,
+                            height: 40,
                           ),
                           Text(
-                            " " +
+                            "  " +
                                 widget.weatherData["hourly"]
                                         ["precipitation_probability"]
                                         [widget.time["hour"] + index * 2]
@@ -337,9 +340,12 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                 })),
           ),
         ),
-        const Center(
+        Center(
           child: Text(
             "Weekly Forecast",
+            style: GoogleFonts.dosis(
+              fontWeight: FontWeight.w500,
+            ),
             textScaler: TextScaler.linear(2),
           ),
         ),
@@ -366,27 +372,40 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Text("$day $month"),
+                        Text(
+                          "$day $month",
+                          style: GoogleFonts.dosis(
+                            fontSize: 20,
+                          ),
+                        ),
                         Builder(builder: (context) {
                           String dailyCode = widget.weatherData["daily"]
                                   ["weather_code"][index]
                               .toString();
                           if (currentTime >= sunrise && currentTime <= sunset) {
                             return Image.asset(
-                                weatherCodes[dailyCode]["day"]
-                                    ["image"]);
+                                weatherCodes[dailyCode]["day"]["image"],
+                                height: 70,
+                                width: 70);
                           } else {
                             return Image.asset(
-                                weatherCodes[dailyCode]["night"]
-                                    ["image"]);
+                                weatherCodes[dailyCode]["night"]["image"],
+                                height: 70,
+                                width: 70);
                           }
                         }),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
+                                style: GoogleFonts.dosis(
+                                  fontSize: 20,
+                                ),
                                 "Max: ${widget.weatherData["daily"]["temperature_2m_max"][index].toString()} °C"),
                             Text(
+                                style: GoogleFonts.dosis(
+                                  fontSize: 20,
+                                ),
                                 " Min: ${widget.weatherData["daily"]["temperature_2m_min"][index].toString()} °C")
                           ],
                         ),
@@ -394,12 +413,19 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                           children: [
                             Image.asset(
                               "precipitation_percentage.png",
-                              height: 50,
+                              height: 40,
                             ),
-                            Text(widget.weatherData["daily"]
-                                        ["precipitation_probability_max"][index]
-                                    .toString() +
-                                "%"),
+                            Text(
+                              "  " +
+                                  widget.weatherData["daily"]
+                                          ["precipitation_probability_max"]
+                                          [index]
+                                      .toString() +
+                                  "%",
+                              style: GoogleFonts.dosis(
+                                fontSize: 20,
+                              ),
+                            ),
                           ],
                         )
                       ],
