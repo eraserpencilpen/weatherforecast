@@ -33,21 +33,19 @@ class HomePageState extends State<HomePage> {
         setState(() {
           locationPermissionGiven = true;
         });
-        getTimeZone(value).then((timezone) {
-          getWeatherData(value).then((data) {
-            setState(() {
-              weatherData = data;
-            });
+        getWeatherData(value).then((data) {
+          setState(() {
+            weatherData = data;
           });
-          getTime(value).then((data) {
-            setState(() {
-              time = data;
-            });
+        });
+        getTime(value).then((data) {
+          setState(() {
+            time = data;
           });
-          getCityName(value).then((data) {
-            setState(() {
-              cityName = data;
-            });
+        });
+        getCityName(value).then((data) {
+          setState(() {
+            cityName = data;
           });
         });
       }
@@ -78,14 +76,16 @@ class HomePageState extends State<HomePage> {
       String sunriseString =
           weatherData["daily"]["sunrise"][0].substring(11, 16);
       String sunsetString = weatherData["daily"]["sunset"][0].substring(11, 16);
+      String windSpeed =
+          weatherData["hourly"]["wind_speed_10m"][time["hour"]].toString();
       List<Widget> widgetOptions = [
         WeatherWidget(weatherData: weatherData, time: time, cityName: cityName),
         MiscPage(
-          sunrise: sunriseString,
-          sunset: sunsetString,
-          uvIndex: uvIndex,
-          humidity: humidity,
-        )
+            sunrise: sunriseString,
+            sunset: sunsetString,
+            uvIndex: uvIndex,
+            humidity: humidity,
+            windSpeed: windSpeed)
       ];
       bool isDay = false;
       String image = "";
@@ -106,7 +106,7 @@ class HomePageState extends State<HomePage> {
       } else {
         image = "night_cloudy.jpg";
       }
-
+      image = "assets/$image";
       return Scaffold(
         body: Container(
             decoration: BoxDecoration(
@@ -115,35 +115,48 @@ class HomePageState extends State<HomePage> {
             child: Builder(builder: (context) {
               return widgetOptions[indexOptions];
             })),
-        bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: isDay
-              ? Color.fromARGB(1, 225, 248, 255)
-              : Color.fromARGB(1, 81, 72, 178),
-          items: [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-            BottomNavigationBarItem(icon: Icon(Icons.sunny), label: "Others")
+        bottomNavigationBar: NavigationBar(
+          height: 60,
+          indicatorColor: isDay ? Colors.amber[200] : Colors.blue[300],
+          selectedIndex: indexOptions,
+          backgroundColor: isDay ? Colors.amber[50] : Colors.blue[100],
+          destinations: [
+            NavigationDestination(icon: Icon(Icons.home), label: "Home"),
+            NavigationDestination(icon: Icon(Icons.sunny), label: "Others")
           ],
-          onTap: (int index) {
-            switch (index) {
-              case 0:
-                setState(() {
-                  indexOptions = 0;
-                });
-              case 1:
-                setState(() {
-                  indexOptions = 1;
-                });
-            }
+          onDestinationSelected: (int index) {
+            setState(() {
+              indexOptions = index;
+            });
           },
         ),
       );
     } else if (locationPermissionGiven) {
-      return const Center(
-        child: CircularProgressIndicator.adaptive(),
+      return Scaffold(
+        body: Container(
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  fit: BoxFit.fill,
+                  image: AssetImage("assets/default_bg.jpg"))),
+          child: const Center(
+            child: CircularProgressIndicator.adaptive(),
+          ),
+        ),
       );
     } else if (!locationPermissionGiven) {
-      return const Center(
-        child: Text("Please allow location access."),
+      return Scaffold(
+        body: Container(
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  fit: BoxFit.fill,
+                  image: AssetImage("assets/default_bg.jpg"))),
+          child: const Center(
+            child: Text(
+              "Please allow location access.",
+              textScaler: TextScaler.linear(4),
+            ),
+          ),
+        ),
       );
     } else {
       return const Center(
@@ -190,7 +203,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
 
     return ListView(
       children: [
-        SizedBox(height: 50),
+        SizedBox(height: 15),
         Center(
           child: Text(
             style: GoogleFonts.dosis(
@@ -228,7 +241,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
         Builder(builder: (context) {
           if (currentTime <= sunset && currentTime >= sunrise) {
             return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Image.asset(weatherCodes[code]["day"]["image"]),
+              Image.asset("assets/" + weatherCodes[code]["day"]["image"]),
               Text(
                 weatherCodes[code]["day"]["description"],
                 style: GoogleFonts.dosis(
@@ -241,7 +254,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
             return Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset(weatherCodes[code]["night"]["image"]),
+                Image.asset("assets/" + weatherCodes[code]["night"]["image"]),
                 Text(
                   weatherCodes[code]["night"]["description"],
                   style: GoogleFonts.dosis(
@@ -272,54 +285,71 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                 itemCount: 10,
                 shrinkWrap: true,
                 itemBuilder: ((context, index) {
-                  int currentHour = widget.time["hour"] + index * 2;
-                  if (currentHour >= 24) {
-                    currentHour = currentHour - 24;
+                  String currentHour =
+                      (widget.time["hour"] + index * 2).toString();
+                  if (int.parse(currentHour) >= 24) {
+                    currentHour = (int.parse(currentHour) - 24).toString();
+                  }
+                  if (currentHour.length <= 1) {
+                    currentHour = "0$currentHour";
                   }
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Text(
-                        currentHour.toString() + ":00",
-                        style: GoogleFonts.dosis(
-                          fontSize: 20,
-                          //   fontWeight: FontWeight.w500,
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.2,
+                        child: Text(
+                          "$currentHour:00",
+                          textAlign: TextAlign.end,
+                          style: GoogleFonts.dosis(
+                            fontSize: 20,
+                            //   fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
-                      Builder(builder: (context) {
-                        String code = widget.weatherData["hourly"]
-                                ["weather_code"]
-                                [widget.time["hour"] + index * 2]
-                            .toString();
-                        if ((widget.time["hour"] + index * 2) * 60 >= sunrise &&
-                            (widget.time["hour"] + index * 2) * 60 <= sunset) {
-                          return Image.asset(
-                            weatherCodes[code]["day"]["image"],
-                            height: 70,
-                            width: 70,
-                          );
-                        } else {
-                          return Image.asset(
-                            weatherCodes[code]["night"]["image"],
-                            height: 70,
-                            width: 70,
-                          );
-                        }
-                      }),
-                      Text(
-                        widget.weatherData["hourly"]["temperature_2m"]
-                                    [widget.time["hour"] + index * 2]
-                                .toString() +
-                            "°C",
-                        style: GoogleFonts.dosis(
-                          fontSize: 20,
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.2,
+                        child: Builder(builder: (context) {
+                          String code = widget.weatherData["hourly"]
+                                  ["weather_code"]
+                                  [widget.time["hour"] + index * 2]
+                              .toString();
+                          if ((widget.time["hour"] + index * 2) * 60 >=
+                                  sunrise &&
+                              (widget.time["hour"] + index * 2) * 60 <=
+                                  sunset) {
+                            return Image.asset(
+                              "assets/" + weatherCodes[code]["day"]["image"],
+                              height: 70,
+                              width: 70,
+                            );
+                          } else {
+                            return Image.asset(
+                              "assets/" + weatherCodes[code]["night"]["image"],
+                              height: 70,
+                              width: 70,
+                            );
+                          }
+                        }),
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.3,
+                        child: Text(
+                          textAlign: TextAlign.start,
+                          widget.weatherData["hourly"]["temperature_2m"]
+                                      [widget.time["hour"] + index * 2]
+                                  .toString() +
+                              "°C",
+                          style: GoogleFonts.dosis(
+                            fontSize: 20,
+                          ),
                         ),
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Image.asset(
-                            "precipitation_percentage.png",
+                            "assets/" + "precipitation_percentage.png",
                             height: 40,
                           ),
                           Text(
@@ -352,7 +382,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
         SizedBox(
           height: 400,
           child: Card(
-              color: Colors.transparent,
+              color: const Color.fromARGB(0, 226, 222, 222),
               margin: EdgeInsets.all(10),
               child: ListView.builder(
                   itemCount: 7,
@@ -372,61 +402,77 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Text(
-                          "$day $month",
-                          style: GoogleFonts.dosis(
-                            fontSize: 20,
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.2,
+                          child: Text(
+                            textAlign: TextAlign.end,
+                            "$day $month",
+                            style: GoogleFonts.dosis(
+                              fontSize: 20,
+                            ),
                           ),
                         ),
-                        Builder(builder: (context) {
-                          String dailyCode = widget.weatherData["daily"]
-                                  ["weather_code"][index]
-                              .toString();
-                          if (currentTime >= sunrise && currentTime <= sunset) {
-                            return Image.asset(
-                                weatherCodes[dailyCode]["day"]["image"],
-                                height: 70,
-                                width: 70);
-                          } else {
-                            return Image.asset(
-                                weatherCodes[dailyCode]["night"]["image"],
-                                height: 70,
-                                width: 70);
-                          }
-                        }),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                                style: GoogleFonts.dosis(
-                                  fontSize: 20,
-                                ),
-                                "Max: ${widget.weatherData["daily"]["temperature_2m_max"][index].toString()} °C"),
-                            Text(
-                                style: GoogleFonts.dosis(
-                                  fontSize: 20,
-                                ),
-                                " Min: ${widget.weatherData["daily"]["temperature_2m_min"][index].toString()} °C")
-                          ],
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.2,
+                          child: Builder(builder: (context) {
+                            String dailyCode = widget.weatherData["daily"]
+                                    ["weather_code"][index]
+                                .toString();
+                            if (currentTime >= sunrise &&
+                                currentTime <= sunset) {
+                              return Image.asset(
+                                  "assets/" +
+                                      weatherCodes[dailyCode]["day"]["image"],
+                                  height: 70,
+                                  width: 70);
+                            } else {
+                              return Image.asset(
+                                  "assets/" +
+                                      weatherCodes[dailyCode]["night"]["image"],
+                                  height: 70,
+                                  width: 70);
+                            }
+                          }),
                         ),
-                        Row(
-                          children: [
-                            Image.asset(
-                              "precipitation_percentage.png",
-                              height: 40,
-                            ),
-                            Text(
-                              "  " +
-                                  widget.weatherData["daily"]
-                                          ["precipitation_probability_max"]
-                                          [index]
-                                      .toString() +
-                                  "%",
-                              style: GoogleFonts.dosis(
-                                fontSize: 20,
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.3,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                  style: GoogleFonts.dosis(
+                                    fontSize: 20,
+                                  ),
+                                  "Max: ${widget.weatherData["daily"]["temperature_2m_max"][index].toString()} °C"),
+                              Text(
+                                  style: GoogleFonts.dosis(
+                                    fontSize: 20,
+                                  ),
+                                  " Min: ${widget.weatherData["daily"]["temperature_2m_min"][index].toString()} °C")
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          child: Row(
+                            children: [
+                              Image.asset(
+                                "assets/" + "precipitation_percentage.png",
+                                height: 40,
                               ),
-                            ),
-                          ],
+                              Text(
+                                "  " +
+                                    widget.weatherData["daily"]
+                                            ["precipitation_probability_max"]
+                                            [index]
+                                        .toString() +
+                                    "%",
+                                style: GoogleFonts.dosis(
+                                  fontSize: 20,
+                                ),
+                              ),
+                            ],
+                          ),
                         )
                       ],
                     );
@@ -443,11 +489,13 @@ class MiscPage extends StatelessWidget {
       required this.humidity,
       required this.uvIndex,
       required this.sunrise,
-      required this.sunset});
+      required this.sunset,
+      required this.windSpeed});
   String humidity;
   String uvIndex;
   String sunrise;
   String sunset;
+  String windSpeed;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -461,6 +509,10 @@ class MiscPage extends StatelessWidget {
             iconPath: "humidity.png", description: "Humidity", data: humidity),
         TileWidget(
             iconPath: "uvindex.png", description: "UV Index", data: uvIndex),
+        TileWidget(
+            iconPath: "wind_speed.png",
+            description: "Wind Speed",
+            data: windSpeed)
       ],
     );
   }
@@ -484,7 +536,7 @@ class TileWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Image.asset(
-            iconPath,
+            "assets/" + iconPath,
             height: 100,
           ),
           SizedBox(
@@ -540,11 +592,11 @@ Future<Map<String, dynamic>> getWeatherData(Position coordinates) async {
   String latitude = coordinates.latitude.toString();
   String longitude = coordinates.longitude.toString();
   final response = await http.get(Uri.parse(
-      "https://api.open-meteo.com/v1/forecast?latitude=$latitude&longitude=$longitude&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,weather_code,apparent_temperature&daily=sunrise,sunset,weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max&timezone=auto"));
+      "https://api.open-meteo.com/v1/forecast?latitude=$latitude&longitude=$longitude&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,weather_code,apparent_temperature,wind_speed_10m&daily=sunrise,sunset,weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max&timezone=auto"));
 
   // API Demo. Latitude longitude set to Bahan.
   // Time zone: GMT +6:30
-  // https://api.open-meteo.com/v1/forecast?latitude=16.819171&longitude=96.158458&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,weather_code,apparent_temperature&daily=sunrise,sunset,weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max&timezone=auto
+  // https://api.open-meteo.com/v1/forecast?latitude=16.819171&longitude=96.158458&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,weather_code,apparent_temperature,wind_speed_10m&daily=sunrise,sunset,weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max&timezone=auto
 
   return jsonDecode(response.body);
 }
