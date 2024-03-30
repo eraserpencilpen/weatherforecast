@@ -42,15 +42,7 @@ class HomePageState extends State<HomePage> {
   Map<String, dynamic> cityName = {};
   bool locationPermissionGiven = false;
   int indexOptions = 0;
-  Brightness theme = Brightness.light;
-
-  ThemeData _buildTheme(brightness) {
-    var baseTheme = ThemeData(brightness: theme);
-
-    return baseTheme.copyWith(
-      textTheme: GoogleFonts.dosisTextTheme(baseTheme.textTheme),
-    );
-  }
+  var themeVar = Brightness.dark;
 
   @override
   void initState() {
@@ -66,29 +58,32 @@ class HomePageState extends State<HomePage> {
           setState(() {
             weatherData = data;
           });
-          getTime(value).then((data) {
+          getTime(value).then((timeData) {
             setState(() {
-              time = data;
+              time = timeData;
+              print("HI");
+
+              double currentTime =
+                  time["hour"].toDouble() * 60 + time["minute"].toDouble();
+              String sunrise_hour =
+                  weatherData["daily"]["sunrise"][0].substring(11, 13);
+              String sunrise_minute =
+                  weatherData["daily"]["sunrise"][0].substring(14, 16);
+              double sunrise = double.parse(sunrise_hour) * 60 +
+                  double.parse(sunrise_minute);
+              String sunset_hour =
+                  weatherData["daily"]["sunset"][0].substring(11, 13);
+              String sunset_minute =
+                  weatherData["daily"]["sunset"][0].substring(14, 16);
+              double sunset =
+                  double.parse(sunset_hour) * 60 + double.parse(sunset_minute);
+
+              if (currentTime >= sunrise && currentTime <= sunset) {
+                setState(() {
+                  themeVar = Brightness.light;
+                });
+              }
             });
-            double currentTime =
-                time["hour"].toDouble() * 60 + time["minute"].toDouble();
-            String sunrise_hour =
-                weatherData["daily"]["sunrise"][0].substring(11, 13);
-            String sunrise_minute =
-                weatherData["daily"]["sunrise"][0].substring(14, 16);
-            double sunrise =
-                double.parse(sunrise_hour) * 60 + double.parse(sunrise_minute);
-            String sunset_hour =
-                weatherData["daily"]["sunset"][0].substring(11, 13);
-            String sunset_minute =
-                weatherData["daily"]["sunset"][0].substring(14, 16);
-            double sunset =
-                double.parse(sunset_hour) * 60 + double.parse(sunset_minute);
-            if (currentTime <= sunrise && currentTime >= sunset) {
-              setState(() {
-                theme = Brightness.dark;
-              });
-            }
           });
         });
 
@@ -105,7 +100,9 @@ class HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: _buildTheme(Brightness),
+        theme: ThemeData(brightness: themeVar).copyWith(
+            textTheme: GoogleFonts.dosisTextTheme(
+                ThemeData(brightness: themeVar).textTheme)),
         home: Builder(builder: (context) {
           if (weatherData.isNotEmpty &&
               cityName.isNotEmpty &&
@@ -337,11 +334,12 @@ class _WeatherWidgetState extends State<WeatherWidget> {
           } else {
             return Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [ SizedBox(
-                height: 50,
-                width: 50,
-                child:  Image.asset("assets/" + weatherCodes[code]["night"]["image"])),
-                
+              children: [
+                SizedBox(
+                    height: 50,
+                    width: 50,
+                    child: Image.asset(
+                        "assets/" + weatherCodes[code]["night"]["image"])),
                 Text(
                   weatherCodes[code]["night"]["description"],
                   style: GoogleFonts.dosis(
