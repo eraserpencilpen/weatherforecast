@@ -583,6 +583,7 @@ class MiscPage extends StatelessWidget {
   String windSpeed;
   @override
   Widget build(BuildContext context) {
+    
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -591,13 +592,13 @@ class MiscPage extends StatelessWidget {
             iconPath: "sunrise.png", description: "Sunrise", data: sunrise),
         TileWidget(iconPath: "sunset.png", description: "Sunset", data: sunset),
         TileWidget(
-            iconPath: "humidity.png", description: "Humidity", data: humidity),
+            iconPath: "humidity.png", description: "Humidity", data: "$humidity %"),
         TileWidget(
             iconPath: "uvindex.png", description: "UV Index", data: uvIndex),
         TileWidget(
             iconPath: "wind_speed.png",
             description: "Wind Speed",
-            data: windSpeed)
+            data: "$windSpeed km/h")
       ],
     );
   }
