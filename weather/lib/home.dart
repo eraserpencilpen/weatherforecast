@@ -226,8 +226,11 @@ class _WeatherWidgetState extends State<WeatherWidget> {
         ),
         Builder(builder: (context) {
           if (currentTime <= sunset && currentTime >= sunrise) {
-            return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Image.asset(weatherCodes[code]["day"]["image"]),
+            return Row(mainAxisAlignment: MainAxisAlignment.center, children: [SizedBox(
+              height: 50,
+              width: 50,
+              child: Image.asset(weatherCodes[code]["day"]["image"])
+              ),
               Text(
                 weatherCodes[code]["day"]["description"],
                 style: GoogleFonts.dosis(
@@ -239,8 +242,11 @@ class _WeatherWidgetState extends State<WeatherWidget> {
           } else {
             return Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(weatherCodes[code]["night"]["image"]),
+              children: [ SizedBox(
+                height: 50,
+                width: 50,
+                child:  Image.asset(weatherCodes[code]["night"]["image"])),
+                
                 Text(
                   weatherCodes[code]["night"]["description"],
                   style: GoogleFonts.dosis(
@@ -292,10 +298,12 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                             .toString();
                         if ((widget.time["hour"] + index * 2) * 60 >= sunrise &&
                             (widget.time["hour"] + index * 2) * 60 <= sunset) {
-                          return Image.asset(
-                            weatherCodes[code]["day"]["image"],
-                            height: 70,
-                            width: 70,
+                          return SizedBox(
+                            height: 50,
+                            width: 50,
+                            child: Image.asset(
+                              weatherCodes[code]["day"]["image"],
+                            ),
                           );
                         } else {
                           return Image.asset(
