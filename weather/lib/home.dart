@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
@@ -7,6 +8,26 @@ import 'dart:convert';
 
 import 'package:weather/const.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+// class MyApp extends StatelessWidget {
+//   const MyApp({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//         debugShowCheckedModeBanner: false,
+//         home: HomePage(),
+//         theme: _buildTheme(Brightness));
+//   }
+
+//   ThemeData _buildTheme(brightness) {
+//     var baseTheme = ThemeData(brightness: Brightness.dark);
+
+//     return baseTheme.copyWith(
+//       textTheme: GoogleFonts.dosisTextTheme(baseTheme.textTheme),
+//     );
+//   }
+// }
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -21,6 +42,15 @@ class HomePageState extends State<HomePage> {
   Map<String, dynamic> cityName = {};
   bool locationPermissionGiven = false;
   int indexOptions = 0;
+  Brightness theme = Brightness.light;
+
+  ThemeData _buildTheme(brightness) {
+    var baseTheme = ThemeData(brightness: theme);
+
+    return baseTheme.copyWith(
+      textTheme: GoogleFonts.dosisTextTheme(baseTheme.textTheme),
+    );
+  }
 
   @override
   void initState() {
@@ -28,7 +58,6 @@ class HomePageState extends State<HomePage> {
     super.initState();
 
     getLocation().then((value) {
-      print(value.runtimeType);
       if (value.runtimeType != LocationPermission) {
         setState(() {
           locationPermissionGiven = true;
@@ -37,12 +66,32 @@ class HomePageState extends State<HomePage> {
           setState(() {
             weatherData = data;
           });
-        });
-        getTime(value).then((data) {
-          setState(() {
-            time = data;
+          getTime(value).then((data) {
+            setState(() {
+              time = data;
+            });
+            double currentTime =
+                time["hour"].toDouble() * 60 + time["minute"].toDouble();
+            String sunrise_hour =
+                weatherData["daily"]["sunrise"][0].substring(11, 13);
+            String sunrise_minute =
+                weatherData["daily"]["sunrise"][0].substring(14, 16);
+            double sunrise =
+                double.parse(sunrise_hour) * 60 + double.parse(sunrise_minute);
+            String sunset_hour =
+                weatherData["daily"]["sunset"][0].substring(11, 13);
+            String sunset_minute =
+                weatherData["daily"]["sunset"][0].substring(14, 16);
+            double sunset =
+                double.parse(sunset_hour) * 60 + double.parse(sunset_minute);
+            if (currentTime <= sunrise && currentTime >= sunset) {
+              setState(() {
+                theme = Brightness.dark;
+              });
+            }
           });
         });
+
         getCityName(value).then((data) {
           setState(() {
             cityName = data;
@@ -54,112 +103,146 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    if (weatherData.isNotEmpty && cityName.isNotEmpty && time.isNotEmpty) {
-      String code =
-          weatherData["hourly"]["weather_code"][time["hour"]].toString();
-      double currentTime =
-          time["hour"].toDouble() * 60 + time["minute"].toDouble();
-      String sunrise_hour =
-          weatherData["daily"]["sunrise"][0].substring(11, 13);
-      String sunrise_minute =
-          weatherData["daily"]["sunrise"][0].substring(14, 16);
-      double sunrise =
-          double.parse(sunrise_hour) * 60 + double.parse(sunrise_minute);
-      String sunset_hour = weatherData["daily"]["sunset"][0].substring(11, 13);
-      String sunset_minute =
-          weatherData["daily"]["sunset"][0].substring(14, 16);
-      double sunset =
-          double.parse(sunset_hour) * 60 + double.parse(sunset_minute);
-      String humidity =
-          weatherData["hourly"]["relative_humidity_2m"][0].toString();
-      String uvIndex = weatherData["daily"]["uv_index_max"][0].toString();
-      String sunriseString =
-          weatherData["daily"]["sunrise"][0].substring(11, 16);
-      String sunsetString = weatherData["daily"]["sunset"][0].substring(11, 16);
-      String windSpeed =
-          weatherData["hourly"]["wind_speed_10m"][time["hour"]].toString();
-      List<Widget> widgetOptions = [
-        WeatherWidget(weatherData: weatherData, time: time, cityName: cityName),
-        MiscPage(
-            sunrise: sunriseString,
-            sunset: sunsetString,
-            uvIndex: uvIndex,
-            humidity: humidity,
-            windSpeed: windSpeed)
-      ];
-      bool isDay = false;
-      String image = "assets/default_bg.jpg";
-      if (currentTime >= sunrise && currentTime <= sunset) {
-        isDay = true;
-      }
-      // If 10 minutes within sunset
-      if (currentTime <= sunset + 10 && currentTime >= sunset - 10) {
-        image = "assets/bg_images/sunset_catbg.jpg";
-      } else if (clearCodes.contains(int.parse(code))) {
-        image = "assets/bg_images/clear_${isDay ? "day" : "night"}_catbg.jpg";
-      } else if (cloudyCodes.contains(int.parse(code))) {
-        image = "assets/bg_images/cloudy_${isDay ? "day" : "night"}_catbg.jpg";
-      } else if (rainyCodes.contains(int.parse(code))) {
-        image = "assets/bg_images/rainy_${isDay ? "day" : "night"}_catbg.jpg";
-      } else if (snowyCodes.contains(int.parse(code))) {
-        image = "assets/bg_images/rainy_${isDay ? "day" : "night"}_catbg.jpg";
-      }
-      return Scaffold(
-        body: Container(
-            decoration: BoxDecoration(
-                image: DecorationImage(
-                    fit: BoxFit.fill, image: AssetImage(image))),
-            child: Builder(builder: (context) {
-              return widgetOptions[indexOptions];
-            })),
-        bottomNavigationBar: NavigationBar(
-          height: 60,
-          indicatorColor: isDay ? Colors.amber[200] : Colors.blue[300],
-          selectedIndex: indexOptions,
-          backgroundColor: isDay ? Colors.amber[50] : Colors.blue[100],
-          destinations: [
-            NavigationDestination(icon: Icon(Icons.home), label: "Home"),
-            NavigationDestination(icon: Icon(Icons.sunny), label: "Others")
-          ],
-          onDestinationSelected: (int index) {
-            setState(() {
-              indexOptions = index;
-            });
-          },
-        ),
-      );
-    } else if (locationPermissionGiven) {
-      return Scaffold(
-        body: Container(
-          decoration: BoxDecoration(
-              image: DecorationImage(
-                  fit: BoxFit.fill,
-                  image: AssetImage("assets/default_bg.jpg"))),
-          child: const Center(
-            child: CircularProgressIndicator.adaptive(),
-          ),
-        ),
-      );
-    } else if (!locationPermissionGiven) {
-      return Scaffold(
-        body: Container(
-          decoration: BoxDecoration(
-              image: DecorationImage(
-                  fit: BoxFit.fill,
-                  image: AssetImage("assets/default_bg.jpg"))),
-          child: const Center(
-            child: Text(
-              "Please allow location access.",
-              textScaler: TextScaler.linear(4),
-            ),
-          ),
-        ),
-      );
-    } else {
-      return const Center(
-        child: Text("Oops. Something went wrong."),
-      );
-    }
+    return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: _buildTheme(Brightness),
+        home: Builder(builder: (context) {
+          if (weatherData.isNotEmpty &&
+              cityName.isNotEmpty &&
+              time.isNotEmpty) {
+            String code =
+                weatherData["hourly"]["weather_code"][time["hour"]].toString();
+            double currentTime =
+                time["hour"].toDouble() * 60 + time["minute"].toDouble();
+            String sunrise_hour =
+                weatherData["daily"]["sunrise"][0].substring(11, 13);
+            String sunrise_minute =
+                weatherData["daily"]["sunrise"][0].substring(14, 16);
+            double sunrise =
+                double.parse(sunrise_hour) * 60 + double.parse(sunrise_minute);
+            String sunset_hour =
+                weatherData["daily"]["sunset"][0].substring(11, 13);
+            String sunset_minute =
+                weatherData["daily"]["sunset"][0].substring(14, 16);
+            double sunset =
+                double.parse(sunset_hour) * 60 + double.parse(sunset_minute);
+            String humidity =
+                weatherData["hourly"]["relative_humidity_2m"][0].toString();
+            String uvIndex = weatherData["daily"]["uv_index_max"][0].toString();
+            String sunriseString =
+                weatherData["daily"]["sunrise"][0].substring(11, 16);
+            String sunsetString =
+                weatherData["daily"]["sunset"][0].substring(11, 16);
+            String windSpeed = weatherData["hourly"]["wind_speed_10m"]
+                    [time["hour"]]
+                .toString();
+            List<Widget> widgetOptions = [
+              WeatherWidget(
+                  weatherData: weatherData, time: time, cityName: cityName),
+              MiscPage(
+                  sunrise: sunriseString,
+                  sunset: sunsetString,
+                  uvIndex: uvIndex,
+                  humidity: humidity,
+                  windSpeed: windSpeed)
+            ];
+            bool isDay = false;
+            String image = "assets/default_bg.jpg";
+            if (currentTime >= sunrise && currentTime <= sunset) {
+              isDay = true;
+            }
+            // If 10 minutes within sunset
+            if (currentTime <= sunset + 10 && currentTime >= sunset - 10) {
+              image = "assets/bg_images/sunset_catbg.jpg";
+            } else if (clearCodes.contains(int.parse(code))) {
+              image =
+                  "assets/bg_images/clear_${isDay ? "day" : "night"}_catbg.jpg";
+            } else if (cloudyCodes.contains(int.parse(code))) {
+              image =
+                  "assets/bg_images/cloudy_${isDay ? "day" : "night"}_catbg.jpg";
+            } else if (rainyCodes.contains(int.parse(code))) {
+              image =
+                  "assets/bg_images/rainy_${isDay ? "day" : "night"}_catbg.jpg";
+            } else if (snowyCodes.contains(int.parse(code))) {
+              image =
+                  "assets/bg_images/rainy_${isDay ? "day" : "night"}_catbg.jpg";
+            }
+            return Scaffold(
+              body: GestureDetector(
+                onPanUpdate: (details) {
+                  int sensitivity = 10;
+                  // Swiping in right direction.
+                  if (details.delta.dx > sensitivity) {
+                    setState(() {
+                      indexOptions = 0;
+                    });
+                  }
+
+                  // Swiping in left direction.
+                  if (details.delta.dx < -sensitivity) {
+                    setState(() {
+                      indexOptions = 1;
+                    });
+                  }
+                },
+                child: Container(
+                    decoration: BoxDecoration(
+                        image: DecorationImage(
+                            fit: BoxFit.fill, image: AssetImage(image))),
+                    child: Builder(builder: (context) {
+                      return widgetOptions[indexOptions];
+                    })),
+              ),
+              bottomNavigationBar: NavigationBar(
+                height: 60,
+                indicatorColor: isDay ? Colors.amber[200] : Colors.blue[300],
+                selectedIndex: indexOptions,
+                backgroundColor: isDay ? Colors.amber[50] : Colors.blue[100],
+                destinations: [
+                  NavigationDestination(icon: Icon(Icons.home), label: "Home"),
+                  NavigationDestination(
+                      icon: Icon(Icons.sunny), label: "Others")
+                ],
+                onDestinationSelected: (int index) {
+                  setState(() {
+                    indexOptions = index;
+                  });
+                },
+              ),
+            );
+          } else if (locationPermissionGiven) {
+            return Scaffold(
+              body: Container(
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        fit: BoxFit.fill,
+                        image: AssetImage("assets/default_bg.jpg"))),
+                child: const Center(
+                  child: CircularProgressIndicator.adaptive(),
+                ),
+              ),
+            );
+          } else if (!locationPermissionGiven) {
+            return Scaffold(
+              body: Container(
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        fit: BoxFit.fill,
+                        image: AssetImage("assets/default_bg.jpg"))),
+                child: const Center(
+                  child: Text(
+                    "Please allow location access.",
+                    textScaler: TextScaler.linear(4),
+                  ),
+                ),
+              ),
+            );
+          } else {
+            return const Center(
+              child: Text("Oops. Something went wrong."),
+            );
+          }
+        }));
   }
 }
 
