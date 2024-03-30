@@ -407,14 +407,14 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                                   sunset) {
                             return Image.asset(
                               "assets/" + weatherCodes[code]["day"]["image"],
-                              height: 70,
-                              width: 70,
+                              height: 50,
+                              width: 50,
                             );
                           } else {
                             return Image.asset(
                               "assets/" + weatherCodes[code]["night"]["image"],
-                              height: 70,
-                              width: 70,
+                              height: 50,
+                              width: 50,
                             );
                           }
                         }),
@@ -445,7 +445,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                                         ["precipitation_probability"]
                                         [widget.time["hour"] + index * 2]
                                     .toString() +
-                                "%",
+                                "%"+"  ",
                             style: GoogleFonts.dosis(
                               fontSize: 20,
                             ),
@@ -510,14 +510,14 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                               return Image.asset(
                                   "assets/" +
                                       weatherCodes[dailyCode]["day"]["image"],
-                                  height: 70,
-                                  width: 70);
+                                  height: 50,
+                                  width: 50);
                             } else {
                               return Image.asset(
                                   "assets/" +
                                       weatherCodes[dailyCode]["night"]["image"],
-                                  height: 70,
-                                  width: 70);
+                                  height: 50,
+                                  width: 50);
                             }
                           }),
                         ),
@@ -553,7 +553,7 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                                             ["precipitation_probability_max"]
                                             [index]
                                         .toString() +
-                                    "%",
+                                    "%" + "  ",
                                 style: GoogleFonts.dosis(
                                   fontSize: 20,
                                 ),
