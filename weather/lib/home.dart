@@ -644,15 +644,7 @@ class TileWidget extends StatelessWidget {
   }
 }
 
-Future<Map<String, dynamic>> getTimeZone(Position coordinates) async {
-  // API Key: YXHW1WF6J7IZ
-  // http://api.timezonedb.com/v2.1/get-time-zone?key=YOUR_API_KEY&format=json&by=position&lat=40.689247&lng=-74.044502
-  String latitude = coordinates.latitude.toString();
-  String longitude = coordinates.longitude.toString();
-  final response = await http.get(Uri.parse(
-      "http://api.timezonedb.com/v2.1/get-time-zone?key=YXHW1WF6J7IZ&format=json&by=position&lat=$latitude&lng=$longitude"));
-  return jsonDecode(response.body);
-}
+
 
 Future<Map<String, dynamic>> getTime(currentLocation) async {
   double latitude = currentLocation.latitude;
