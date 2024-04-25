@@ -61,7 +61,6 @@ class HomePageState extends State<HomePage> {
           getTime(value).then((timeData) {
             setState(() {
               time = timeData;
-              print("HI");
 
               double currentTime =
                   time["hour"].toDouble() * 60 + time["minute"].toDouble();
@@ -443,7 +442,8 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                                         ["precipitation_probability"]
                                         [widget.time["hour"] + index * 2]
                                     .toString() +
-                                "%"+"  ",
+                                "%" +
+                                "  ",
                             style: GoogleFonts.dosis(
                               fontSize: 20,
                             ),
@@ -551,7 +551,8 @@ class _WeatherWidgetState extends State<WeatherWidget> {
                                             ["precipitation_probability_max"]
                                             [index]
                                         .toString() +
-                                    "%" + "  ",
+                                    "%" +
+                                    "  ",
                                 style: GoogleFonts.dosis(
                                   fontSize: 20,
                                 ),
@@ -583,7 +584,6 @@ class MiscPage extends StatelessWidget {
   String windSpeed;
   @override
   Widget build(BuildContext context) {
-    
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -592,7 +592,9 @@ class MiscPage extends StatelessWidget {
             iconPath: "sunrise.png", description: "Sunrise", data: sunrise),
         TileWidget(iconPath: "sunset.png", description: "Sunset", data: sunset),
         TileWidget(
-            iconPath: "humidity.png", description: "Humidity", data: "$humidity %"),
+            iconPath: "humidity.png",
+            description: "Humidity",
+            data: "$humidity %"),
         TileWidget(
             iconPath: "uvindex.png", description: "UV Index", data: uvIndex),
         TileWidget(
@@ -643,8 +645,6 @@ class TileWidget extends StatelessWidget {
     );
   }
 }
-
-
 
 Future<Map<String, dynamic>> getTime(currentLocation) async {
   double latitude = currentLocation.latitude;
